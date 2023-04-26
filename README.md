@@ -12,5 +12,11 @@
   6. Jogo da Cobrinha
   
 ### Stack
-   - Haskell
-   - Mysql
+  - Haskell
+  - Postgres
+
+### Iniciar o sistema
+  #### cabal run
+
+### Observações importante
+  - Não clonar um projeto para um diretório que contenha caracteres especiais ou espaços em seu PATH
