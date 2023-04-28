@@ -1,9 +1,11 @@
 {-# LANGUAGE OverloadedStrings #-}
 module DB.Models.Message where
 import Database.PostgreSQL.Simple
+import DB.Connection
 
-createMessages :: Connection -> IO()
-createMessages conn = do
+createMessages :: IO()
+createMessages = do
+    conn <- connectionMyDB
     execute_ conn "CREATE TABLE IF NOT EXISTS messages (\
                     \id SERIAL PRIMARY KEY,\
                     \message VARCHAR(255) NOT NULL,\
@@ -14,8 +16,9 @@ createMessages conn = do
                     \FOREIGN KEY(received_by) REFERENCES chips(id));"
     return ()
 
-insertMessage ::  Connection -> String -> String -> Int -> Int -> IO ()
-insertMessage conn message message_date sented_by received_by = do
+insertMessage :: String -> String -> Int -> Int -> IO ()
+insertMessage message message_date sented_by received_by = do
  let q = "insert into messages (message, message_date, sented_by, received_by ) values (?,?,?,?)"
- execute conn q (message, message_date, sented_by, received_by)
+ conn <- connectionMyDB
+ execute  conn q (message, message_date, sented_by, received_by)
  return ()

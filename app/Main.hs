@@ -11,11 +11,19 @@ import DB.Models.Message
 main :: IO()
 main = do
  putStrLn "Criando base de dados..."
- conn <- startDatabase 
+ startDatabase 
  putStrLn "Base de dados criada"
- insertChip conn "Joao Victor" "79988686084" False
- insertChip conn "Rodrigo Correia" "83954478512" False
- insertContact conn "Rodrigo Monstrinho" "83954478512" "2023-01-01" (-1) 1
- insertMessage conn "Eae corno" "2023-04-26 16:09:12" 1 2
- insertCall conn "2023-04-26 16:09:12" "2023-04-26 16:12:12" True 2 1
- insertEvent conn "Aniversario do monstrinho" "2023-04-26" "" 1
+ insertChip "Joao Victor" "79988686084" False
+ insertChip "Rodrigo Correia" "83954478512" False
+ insertContact "Rodrigo Monstrinho" "83954478512" "2023-01-01" (-1) 1
+ insertMessage "Eae corno" "2023-04-26 16:09:12" 1 2
+ insertCall "2023-04-26 16:09:12" "2023-04-26 16:12:12" True 2 1
+ insertEvent "Aniversario do monstrinho" "2023-04-26" "" 1
+
+startDatabase:: IO()
+startDatabase = do
+ createChips 
+ createCalls 
+ createMessages 
+ createEvents 
+ createContacts 

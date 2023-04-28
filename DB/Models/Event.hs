@@ -1,9 +1,11 @@
 {-# LANGUAGE OverloadedStrings #-}
 module DB.Models.Event where
 import Database.PostgreSQL.Simple
+import DB.Connection
 
-createEvents :: Connection -> IO()
-createEvents conn = do
+createEvents :: IO()
+createEvents = do
+    conn <- connectionMyDB
     execute_ conn "CREATE TABLE IF NOT EXISTS events (\
                     \id SERIAL PRIMARY KEY,\
                     \title VARCHAR(255) NOT NULL,\
@@ -14,8 +16,9 @@ createEvents conn = do
 
     return ()
 
-insertEvent ::  Connection -> String -> String -> String -> Int -> IO ()
-insertEvent conn title event_day comments chip_id = do
+insertEvent :: String -> String -> String -> Int -> IO ()
+insertEvent title event_day comments chip_id = do
  let q = "insert into events (title, event_day, comments, chip_id ) values (?,?,?,?)"
+ conn <- connectionMyDB
  execute conn q (title, event_day, comments, chip_id)
  return ()
