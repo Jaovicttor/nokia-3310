@@ -1,7 +1,20 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE DeriveGeneric  #-}
 module DB.Models.Chip where
 import Database.PostgreSQL.Simple
 import DB.Connection
+import GHC.Generics (Generic)
+
+data Chip = Chip {
+    idChip:: Int,
+    owner:: String,
+    number:: String,
+    isOn :: Bool
+} deriving (Generic, FromRow,Show, Read, Eq)
+
+chipAtual :: Chip
+chipAtual = Chip{idChip = 1, owner = "Joao Victor", number = "79988686084", isOn = True }
 
 createChips :: IO()
 createChips = do
@@ -19,3 +32,13 @@ insertChip owner number isOn = do
  conn <- connectionMyDB
  execute conn q (owner, number, isOn)
  return ()
+
+getChips:: IO [Chip]
+getChips = do
+    conn <- connectionMyDB
+    query_ conn "SELECT * FROM chips" :: IO [Chip]
+
+getChipByNumber :: String -> IO [Chip]
+getChipByNumber number = do
+    conn <- connectionMyDB
+    query conn "SELECT * FROM chips WHERE number = ?" (Only number)
