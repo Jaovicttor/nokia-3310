@@ -1,19 +1,19 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings #-} 
 module Main where
 import Database.PostgreSQL.Simple
+import App.Modules.Message.Index
 import DB.Connection
 import DB.Models.Chip
 import DB.Models.Contact
 import DB.Models.Call
 import DB.Models.Event
 import DB.Models.Message
-import DB.Models.Alarm
+import DB.Models.Alarm;
+
 
 main :: IO()
-main = do
- putStrLn "Criando base de dados..."
- startDatabase 
- putStrLn "Base de dados criada"
+main = do 
+ mainMessage          
  
 --  insertChip "Joao Victor" "79988686084" False
 --  insertChip "Rodrigo Correia" "83954478512" False
@@ -24,10 +24,10 @@ main = do
 --  insertAlarm "15:50" "Teste alarms"
 
 startDatabase:: IO()
-startDatabase = do  
+startDatabase = do     
  createChips 
  createCalls 
- createMessages 
+ createMessages      
  createEvents 
- createContacts 
- createAlarms
+ createContacts  
+ createAlarms  
