@@ -23,7 +23,7 @@ sendMessage = do
  print "-------------------------------------------"
  if(message == "") then print "A mensagem nao pode ser vazia."
  else do
-    chip <- getChip number
+    chip <- getChipByNumber number
     if length chip == 0
         then print "Numero de telefone invalido"
     else do
