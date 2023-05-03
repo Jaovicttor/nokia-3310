@@ -5,18 +5,25 @@ addContato = do
   putStrLn ("\n-Adicionar contato-\n")
   putStrLn ( "Nome: ")
   nome <- getLine
-  putStrLn ("Telefone: ")
-  telefone <- getLine
-  if length telefone /= 13
-    then do
-      putStrLn ("\nNúmero informado é invalido siga o padrão: xx xxxx xxxxx\n")
-      addContato
+  if nome == "-"
+    then
+      menuLoop
   else do
-    let identificador = case nome of
-                      "" -> telefone
-                      otherwise -> nome
-    putStrLn ("\n" ++ "Contato adicionado: " ++ identificador ++ " " ++ " - " ++ telefone ++ "\n")
-
+    putStrLn ("Telefone: ")
+    telefone <- getLine
+    if nome == "-"
+        then
+        menuLoop
+    else 
+      if length telefone /= 11 && length telefone /= 3
+        then do
+          putStrLn ("\nNúmero informado é invalido siga o padrão:  XX999999999\n")
+          addContato
+      else do
+        let identificador = case nome of
+                          "" -> telefone
+                          otherwise -> nome
+        putStrLn ("\n" ++ "Contato adicionado: " ++ identificador ++ " " ++ " - " ++ telefone ++ "\n")
 
 menuLoop :: IO ()
 menuLoop = do
@@ -27,7 +34,7 @@ menuLoop = do
     putStrLn "3 - Discagem Rapida"
     putStrLn "4 - Editar Contato"
     putStrLn "5 - Excluir Contato"
-    putStrLn "0 - Voltar"
+    putStrLn "0 - Voltar ao Menu"
     choice <- getLine
     case choice of
         "1" -> putStrLn "TODO"
