@@ -37,7 +37,7 @@ sendMessage = do
             else do
                 let c = head chip
                 let received_by = (idChip c)
-                let sented_by = (idChip chipAtual) 
+                let sented_by = (idChip myChip) 
                 if(received_by == sented_by ) then putStrLn "Não é possivel enviar uma mensagem para o próprio número"
                 else do
                     insertMessage message "2023-05-02 14:28:12" sented_by received_by
