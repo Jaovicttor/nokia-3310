@@ -4,33 +4,50 @@ import DB.Models.Chip
 
 mainMessage :: IO()
 mainMessage = do
- print "x - Enviar mensagem"
+ showConversations
+ putStrLn "x - Enviar mensagem"
+ putStrLn "0 - Sair"
  op <- getLine
- if(op == "x") 
-    then do
-     sendMessage
- else print("Erro")
- mainMessage
 
+ if(op == "0") then 
+    putStrLn "saindo..."
+ else do
+    if(op == "x") then sendMessage
+    else putStrLn("Erro")
+    mainMessage
+    
 
 sendMessage :: IO()
 sendMessage = do
- print "-------------------------------------------"
- print "Numero:"
+ putStrLn "-------------------------------------------"
+ putStrLn "Número:"
  number <- getLine
- print "Mensagem:"
- message <- getLine
- print "-------------------------------------------"
- if(message == "") then print "A mensagem nao pode ser vazia."
+ if(number == "-") then putStrLn""
  else do
-    chip <- getChipByNumber number
-    if length chip == 0
-        then print "Numero de telefone invalido"
+    putStrLn "Mensagem:"
+    message <- getLine
+    if(message == "-") then putStrLn""
     else do
-        let c = head chip
-        let received_by = (idChip c)
-        let sented_by = (idChip chipAtual) 
-        if(received_by == sented_by ) then print "Nao e possivel enviar uma mensagem para o proprio numero"
+        putStrLn "-------------------------------------------"
+        if(message == "") then putStrLn "A mensagem não pode ser vazia."
         else do
-            insertMessage message "2023-05-02 14:28:12" sented_by received_by
-            print "Mensagem enviada com sucesso"
+            chip <- getChipByNumber number
+            if length chip == 0
+                then putStrLn  "Número de telefone inválido"
+            else do
+                let c = head chip
+                let received_by = (idChip c)
+                let sented_by = (idChip chipAtual) 
+                if(received_by == sented_by ) then putStrLn "Não é possivel enviar uma mensagem para o próprio número"
+                else do
+                    insertMessage message "2023-05-02 14:28:12" sented_by received_by
+                    putStrLn "Mensagem enviada com sucesso"
+
+showConversations :: IO()
+showConversations = do
+    putStrLn "-------------------------------------------"
+    putStrLn "------------------Mensagens----------------"
+    putStrLn "-------------------------------------------"
+    conversations <- getConversations
+    putStrLn conversations
+    putStrLn "-------------------------------------------"

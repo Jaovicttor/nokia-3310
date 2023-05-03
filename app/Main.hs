@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-} 
 module Main where
 import Database.PostgreSQL.Simple
-import App.Modules.Message.Index
+import qualified App.Modules.Message.Index as Message
 import DB.Connection
 import DB.Models.Chip
 import DB.Models.Contact
@@ -13,7 +13,7 @@ import DB.Models.Alarm;
 
 main :: IO()
 main = do 
- mainMessage          
+ Message.mainMessage          
  
 --  insertChip "Joao Victor" "79988686084" False
 --  insertChip "Rodrigo Correia" "83954478512" False
@@ -29,5 +29,5 @@ startDatabase = do
  createCalls 
  createMessages      
  createEvents 
- createContacts  
+ createContacts
  createAlarms  
