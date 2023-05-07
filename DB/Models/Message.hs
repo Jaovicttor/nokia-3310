@@ -4,6 +4,7 @@
 module DB.Models.Message where
 import Database.PostgreSQL.Simple
 import DB.Connection
+import DB.Models.Chip
 import GHC.Generics (Generic)
 
 data Message = Message {
@@ -13,8 +14,9 @@ data Message = Message {
 } deriving (Generic, FromRow,Show, Read, Eq)
 
 data Conversation = Conversation {
+    chip_id :: Int,
     name:: Maybe String,
-    number:: String
+    phone:: String
 } deriving (Generic, FromRow,Show, Read, Eq)
 
 createMessages :: IO()
@@ -30,33 +32,64 @@ createMessages = do
                     \FOREIGN KEY(received_by) REFERENCES chips(id));"
     return ()
 
-insertMessage :: String -> String -> Int -> Int -> IO ()
-insertMessage message message_date sented_by received_by = do
+insertMessage :: String -> String -> Int -> IO ()
+insertMessage message message_date received_by = do
  let q = "insert into messages (message, message_date, sented_by, received_by ) values (?,?,?,?)"
  conn <- connectionMyDB
- execute  conn q (message, message_date, sented_by, received_by)
+ execute  conn q (message, message_date, (idChip myChip), received_by)
  return ()
 
-getConversations:: IO String
+getConversations:: IO [Conversation]
 getConversations = do
-    conn <- connectionMyDB
-    result <- query_ conn "select c2.name, c.number from messages m \ 
+    let q = "select c.id, c2.name, c.number from messages m \ 
                 \join chips c \
                 \on (c.id = m.sented_by or c.id  = m.received_by) \
                 \left join contacts c2 \
                 \on c2.phone = c.number \
-                \where (m.received_by = 1 or\
-                \    m.sented_by = 1) and \
-                \    (c2.chip_id = 1 or c2.chip_id is null)\
-                \    and c.id != 1\
-                \group by name,number" :: IO [Conversation]
+                \where ((m.received_by = ? and  available_received_by = true)  or\
+                \    (m.sented_by = ? and available_sented_by = true) ) and \
+                \    (c2.chip_id = ? or c2.chip_id is null)\
+                \    and c.id != ?\
+                \group by name,number,c.id" 
+    conn <- connectionMyDB
+    query conn q ((idChip myChip), (idChip myChip), (idChip myChip), (idChip myChip)) :: IO [Conversation]
 
-    return (conversationsToString result)
 
-
-conversationsToString:: [Conversation] -> String
-conversationsToString [] = []
-conversationsToString (x:xs) = (toStringConversation x) ++ "\n" ++ conversationsToString xs
+conversationsToString:: [Conversation] -> Int -> String
+conversationsToString [] _ = []
+conversationsToString (x:xs) n = show(n + 1) ++ " - " ++ (toStringConversation x) ++ "\n" ++ conversationsToString xs (n+1)
 
 toStringConversation :: Conversation -> String
-toStringConversation conv =  maybe (number conv) id (name conv)
+toStringConversation conv =  maybe (phone conv) id (name conv)
+
+
+findConversation :: Int ->  IO [Message]
+findConversation receivedBy = do
+    let q = "select m.message, m.sented_by, m.received_by from messages m where (m.sented_by = ? and m.received_by = ? and available_sented_by = true ) or (m.sented_by = ? and m.received_by = ? and available_received_by = true) order by m.message_date" 
+    conn <- connectionMyDB
+    query conn q ((idChip myChip), receivedBy, receivedBy, (idChip myChip)) :: IO [Message]
+
+messageToString :: String -> [Message] -> String
+messageToString _ [] = []
+messageToString name (x:xs) | (sented_by x) == (idChip myChip) = ("Você: "++ (message x) ++ "\n"  ++ (messageToString name xs))
+                            | otherwise =  (name ++ ": "++ (message x) ++ "\n"  ++ (messageToString name xs))
+
+deleteConversation :: Int -> IO()
+deleteConversation chipId = do
+    deleteSentedMessage chipId
+    deleteReceivedMessage chipId
+    
+deleteSentedMessage :: Int -> IO()
+deleteSentedMessage received_by = do
+    let q = "update messages set available_sented_by = false where sented_by = ? and received_by = ? and available_sented_by = true;" 
+    conn <- connectionMyDB
+    execute conn q ((idChip myChip), received_by)
+    return ()
+
+deleteReceivedMessage :: Int -> IO()
+deleteReceivedMessage sented_by = do
+    let q = "update messages set available_received_by = false where sented_by = ? and received_by = ? and available_received_by = true;" 
+    conn <- connectionMyDB
+    execute conn q (sented_by, (idChip myChip))
+    return ()
+
