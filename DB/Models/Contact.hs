@@ -46,10 +46,4 @@ deleteContact name = do
   execute conn q [name]
   return ()
 
-editContact :: String -> IO ()
-editContact name = do
-  let q = "delete from contacts where name = ?"
-  conn <- connectionMyDB
-  execute conn q [name]
-  
 
