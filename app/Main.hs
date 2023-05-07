@@ -8,12 +8,15 @@ import DB.Models.Call
 import DB.Models.Event
 import DB.Models.Message
 import DB.Models.Alarm
+import qualified App.Modules.Contacts.Index as Contact
 
 main :: IO()
 main = do
- putStrLn "Criando base de dados..."
- startDatabase 
- putStrLn "Base de dados criada"
+    Contact.main
+
+ --  putStrLn "Criando base de dados..."
+ --  startDatabase 
+ --  putStrLn "Base de dados criada"
  
 --  insertChip "Joao Victor" "79988686084" False
 --  insertChip "Rodrigo Correia" "83954478512" False
@@ -30,4 +33,4 @@ startDatabase = do
  createMessages 
  createEvents 
  createContacts 
- createAlarms
+ createAlarms      

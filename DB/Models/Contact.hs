@@ -23,3 +23,33 @@ insertContact name phone birthday speed_dial chip_id = do
  conn <- connectionMyDB
  execute conn q (name, phone, birthday, speed_dial, chip_id)
  return ()
+
+
+getContactNames :: IO [String]
+getContactNames = do
+  let q = "select name from contacts"
+  conn <- connectionMyDB
+  result <- query_ conn q :: IO [Only String]
+  return $ map fromOnly result
+
+getSpeedDial :: IO [String]
+getSpeedDial = do
+  let q = "select name from contacts where speed_dial < 10 and speed_dial > 0"
+  conn <- connectionMyDB
+  result <- query_ conn q :: IO [Only String]
+  return $ map fromOnly result
+
+deleteContact :: String -> IO ()
+deleteContact name = do
+  let q = "delete from contacts where name = ?"
+  conn <- connectionMyDB
+  execute conn q [name]
+  return ()
+
+editContact :: String -> IO ()
+editContact name = do
+  let q = "delete from contacts where name = ?"
+  conn <- connectionMyDB
+  execute conn q [name]
+  
+
