@@ -13,8 +13,8 @@ data Chip = Chip {
     isOn :: Bool
 } deriving (Generic, FromRow,Show, Read, Eq)
 
-chipAtual :: Chip
-chipAtual = Chip{idChip = 1, owner = "Joao Victor", number = "79988686084", isOn = True }
+myChip :: Chip
+myChip = Chip{idChip = 1, owner = "Joao Victor", number = "79988686084", isOn = True }
 
 createChips :: IO()
 createChips = do
