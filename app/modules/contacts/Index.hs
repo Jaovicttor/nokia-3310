@@ -92,8 +92,7 @@ coletarInformacoesContato = do
           coletarInformacoesContato
         else do
           putStrLn ("Aniversário (Opcional - YYYY/MM/DD): ")
-          aniversarioStr <- getLine
-          let aniversario = if null aniversarioStr then "9999/12/31" else read aniversarioStr
+          aniversario <- getLine
           putStrLn ("Adicione uma posição para discagem Rápida (0-9) (Opcional): ")
           discagemStr <- getLine
           let discagem = if null discagemStr then 0 else read discagemStr
