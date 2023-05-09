@@ -12,7 +12,6 @@ data Contact = Contact {
     idContact:: Int,
     name::  String,
     phone:: String,
-    --birthday:: String,
     speed_dial:: Int
     
 } deriving (Generic, FromRow,Show, Read, Eq)
