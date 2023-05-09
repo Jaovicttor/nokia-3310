@@ -52,46 +52,20 @@ addAniversary :: String -> String -> IO()
 addAniversary name date = do 
  insertEvent ("Aniversário de " ++ name) date ("Aniversário de " ++ name ++ "criado automaticamente pelo sistema")
 
-swapData :: String -> String
-swapData strData = formatTime defaultTimeLocale "%Y-%m-%d" dataObj
-    where
-        dataObj = parseTimeOrError True defaultTimeLocale "%d-%m-%Y" strData :: Day
-
-isDateAfter :: Day -> Day -> Bool
-isDateAfter d1 d2 = compare d1 d2 == GT
-
-currentDayMonth :: IO() 
-currentDayMonth = do 
-  currentTime <- getCurrentTime
-  timeZone <- getTimeZone currentTime 
-  let localTime = utcToLocalTime timeZone currentTime 
-  let formattedTime = formatTime defaultTimeLocale "%Y-%m-%d" localTime
-  putStrLn formattedTime
-
-utctimeToString :: UTCTime -> String
-utctimeToString time = formatTime defaultTimeLocale "%d-%m-%Y" time
-
-validData :: String -> Bool
-validData x = (validEmpty x) && (isValidDate x)
-
-isValidDate :: String -> Bool
-isValidDate dateStr =
-  case parseTimeM True defaultTimeLocale "%d-%m-%Y" dateStr :: Maybe Day of
-    Just _  -> True
-    Nothing -> False
-
-validEmpty :: String -> Bool
-validEmpty title = length title > 0
-
-validTitle :: String -> Bool
-validTitle title = validEmpty title
+showAllEvents :: IO() 
+showAllEvents = do 
+    events <- getEvents
+    let str = "Todos os Eventos2"
+    header str
+    putStrLn $ displayEvents events (length str)
+    menuCalendar
 
 nextEvents :: IO()
 nextEvents = do
     events <- getNextEvent
     let str = "Próximos Eventos"
     header str
-    putStrLn $ displayEvents2 events (length str)
+    putStrLn $ displayEvents events (length str)
     menuCalendar
 
 previusEvents :: IO()
@@ -99,47 +73,22 @@ previusEvents = do
     events<- getPreviusEvent
     let str = "Eventos Anteriores"
     header str
-    putStrLn $ displayEvents2 events (length str)
+    putStrLn $ displayEvents events (length str)
     menuCalendar
 
-showAllEvents :: IO() 
-showAllEvents = do 
+editEvent :: IO()
+editEvent = do 
     events <- getEvents
-    let str = "Todos os Eventos2"
-    header str
-    putStrLn $ displayEvents2 events (length str)
-    menuCalendar
-
-existDbBool :: [Event] -> Bool
-existDbBool [] = False
-existDbBool x = True
-
-displayEvents2 :: [Event] -> Int -> String 
-displayEvents2 [] x  = "Não há eventos"
-displayEvents2 events num =
-  let separator = replicate (21 + num) '-'
-      displayEvent event = 
-        separator ++ "\n" ++
-        "Titulo: " ++ title event ++ "\n" ++ --formatacao nokia quebra
-        "Comentário: " ++ comment event ++ "\n" ++
-        "Data: " ++ utctimeToString (event_day event) ++ "\n" ++ --parse utc
-        separator 
-  in unlines $ map displayEvent events
-
-displaySingleEvent :: Event -> String
-displaySingleEvent event = 
-          padrao ++ "\n" ++
-          "Titulo: " ++ title event ++ "\n" ++
-          "Comentário: " ++ comment event ++ "\n" ++
-          "Data: " ++ utctimeToString (event_day event) ++ "\n" ++
-          padrao
-
-padrao :: String
-padrao = replicate 31 '-'
-
-validBack :: String -> IO ()
-validBack "_" = menuCalendar
-validBack _ = putStrLn ""
+    let events_display = eventsToString events 0
+    putStrLn events_display
+    putStrLn padrao
+    putStrLn "Informe o nº do evento:"
+    event_number <- getLine
+    validBack event_number
+    putStrLn padrao
+    deleteEvent 1 (read event_number)
+    addEvento 1
+    putStrLn $ padrao ++ "\n" ++ "Editou com sucesso"
 
 formDeleteEvent :: IO()
 formDeleteEvent = do 
@@ -173,21 +122,6 @@ deleteEvent 1 number = do
     else do
         let event = (events !! (number-1)) -- acessa na lista
         deleteEventDB (event_id event)
-
-
-editEvent :: IO()
-editEvent = do 
-    events <- getEvents
-    let events_display = eventsToString events 0
-    putStrLn events_display
-    putStrLn padrao
-    putStrLn "Informe o nº do evento:"
-    event_number <- getLine
-    validBack event_number
-    putStrLn padrao
-    deleteEvent 1 (read event_number)
-    addEvento 1
-    putStrLn $ padrao ++ "\n" ++ "Editou com sucesso"
 
 menuLoop :: IO ()
 menuLoop = do
@@ -238,9 +172,9 @@ numberPad = putStrLn $
               "     | 1  |  2  |  3  |\n" ++
               "     | 4  |  5  |  6  |\n" ++
               "     | 7  |  8  |  9  |\n" ++
-              "     |    |  0  |     |\n"
+              "     | *  |  0  |  _  |\n"
   
---todo helper
+--todo helper time
 currentTime :: IO()
 currentTime = do
   currentTime <- getCurrentTime
@@ -249,3 +183,72 @@ currentTime = do
   let timeString = formatTime defaultTimeLocale "%c"localTime
   putStrLn $ "   " ++ timeString 
   putStrLn  $ replicate 31 '-'
+
+currentDayMonth :: IO() 
+currentDayMonth = do 
+  currentTime <- getCurrentTime
+  timeZone <- getTimeZone currentTime 
+  let localTime = utcToLocalTime timeZone currentTime 
+  let formattedTime = formatTime defaultTimeLocale "%Y-%m-%d" localTime
+  putStrLn formattedTime
+
+utctimeToString :: UTCTime -> String
+utctimeToString time = formatTime defaultTimeLocale "%d-%m-%Y" time
+
+swapData :: String -> String
+swapData strData = formatTime defaultTimeLocale "%Y-%m-%d" dataObj
+    where
+        dataObj = parseTimeOrError True defaultTimeLocale "%d-%m-%Y" strData :: Day
+
+-- helper interface
+padrao :: String
+padrao = replicate 31 '-'
+
+validBack :: String -> IO ()
+validBack "_" = menuCalendar
+validBack _ = putStrLn ""
+
+existDbBool :: [Event] -> Bool
+existDbBool [] = False
+existDbBool x = True
+
+-- Metodos Auxiliares exclusivos de Eventos
+-- Validação 
+isDateAfter :: Day -> Day -> Bool
+isDateAfter d1 d2 = compare d1 d2 == GT
+
+validData :: String -> Bool
+validData x = (validEmpty x) && (isValidDate x)
+
+isValidDate :: String -> Bool
+isValidDate dateStr =
+  case parseTimeM True defaultTimeLocale "%d-%m-%Y" dateStr :: Maybe Day of
+    Just _  -> True
+    Nothing -> False
+
+validEmpty :: String -> Bool
+validEmpty title = length title > 0
+
+validTitle :: String -> Bool
+validTitle title = validEmpty title
+
+-- Listagem 
+displayEvents :: [Event] -> Int -> String 
+displayEvents [] x  = "Não há eventos"
+displayEvents events num =
+  let separator = replicate (21 + num) '-'
+      displayEvent event = 
+        separator ++ "\n" ++
+        "Titulo: " ++ title event ++ "\n" ++ --formatacao nokia quebra
+        "Comentário: " ++ comment event ++ "\n" ++
+        "Data: " ++ utctimeToString (event_day event) ++ "\n" ++ --parse utc
+        separator 
+  in unlines $ map displayEvent events
+
+displaySingleEvent :: Event -> String
+displaySingleEvent event = 
+          padrao ++ "\n" ++
+          "Titulo: " ++ title event ++ "\n" ++
+          "Comentário: " ++ comment event ++ "\n" ++
+          "Data: " ++ utctimeToString (event_day event) ++ "\n" ++
+          padrao

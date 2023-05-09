@@ -19,4 +19,3 @@ main = do
 --  insertAlarm "15:50" "Teste alarms"
 
 -- encapsular main no DB 
-
