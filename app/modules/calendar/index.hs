@@ -6,8 +6,6 @@ import App.Shared.Main.Helper.Timer
 import Data.Time.Format (defaultTimeLocale, formatTime)
 import Data.Char
 
--- todo remove pelo Banco
-
 addEvento :: Int ->IO ()
 addEvento 0 = do
   putStrLn "Titulo: "
@@ -112,31 +110,9 @@ showAllEvents = do
     putStrLn $ displayEvents2 events (length str)
     menuCalendar
 
-existOnDb :: IO()
-existOnDb = do
-  header "Existe"
-  putStrLn "Titulo: "
-  title <- getLine
-  validBack title
-  existe <- findEvent title
-  putStrLn $ "\n" ++ displayEvents existe 
-  menuCalendar
-
 existDbBool :: [Event] -> Bool
 existDbBool [] = False
 existDbBool x = True
-
-displayEvents :: [Event] -> String 
-displayEvents [] = "Não há eventos"
-displayEvents events =
-  let separator = replicate 31 '-'
-      displayEvent event = 
-        separator ++ "\n" ++
-        "Titulo: " ++ title event ++ "\n" ++ --formatacao nokia quebra
-        "Comentário: " ++ comment event ++ "\n" ++
-        "Data: " ++ utctimeToString (event_day event) ++ "\n" ++ --parse utc
-        separator 
-  in unlines $ map displayEvent events
 
 displayEvents2 :: [Event] -> Int -> String 
 displayEvents2 [] x  = "Não há eventos"
@@ -224,7 +200,6 @@ menuLoop = do
      "| 4 - Listar Eventos passados |" ++ "\n" ++
      "| 5 - Editar Evento           |" ++ "\n" ++
      "| 6 - Excluir Evento          |" ++ "\n" ++
-     "| 7 - Existe o Evento         |" ++ "\n" ++
      "| 0 - Voltar                  |" ++ "\n" ++
      replicate 31 '-' 
     numberPad
@@ -238,7 +213,6 @@ menuLoop = do
         "4" -> previusEvents >> menuCalendar
         "5" -> editEvent >> menuCalendar
         "6" -> formDeleteEvent >> menuCalendar
-        "7" -> existOnDb >> menuCalendar
         "0" -> putStrLn "saindo"
         _   -> do
             putStrLn "Opção inválida! Tente novamente."
@@ -248,9 +222,9 @@ menuCalendar :: IO ()
 menuCalendar = do
     header "Calendário"
     currentTime
-    --todo lista 5 eventos
     menuLoop
 
+-- helper interface
 header :: String -> IO()
 header str = putStrLn  $ 
             replicate (21 + length str) '-' ++ "\n" ++
@@ -258,7 +232,7 @@ header str = putStrLn  $
             replicate (21 + length str) '-' ++ "\n" ++
             replicate 10 '-' ++ str ++ replicate 11 '-' ++ "\n" ++
             replicate (21 + length str) '-' 
-
+-- helper interface
 numberPad :: IO()
 numberPad = putStrLn $ 
               "     | 1  |  2  |  3  |\n" ++
@@ -266,7 +240,7 @@ numberPad = putStrLn $
               "     | 7  |  8  |  9  |\n" ++
               "     |    |  0  |     |\n"
   
--- podemos colocar essas duas funcoes no helper de timer
+--todo helper
 currentTime :: IO()
 currentTime = do
   currentTime <- getCurrentTime

@@ -20,5 +20,3 @@ main = do
 
 -- encapsular main no DB 
 
-
-
