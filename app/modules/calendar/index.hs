@@ -13,7 +13,7 @@ addEvento 0 = do
   putStrLn "Titulo: "
   titleInput <- getLine
   validBack titleInput
-  putStrLn "Data (YYYY-MM-DD): "
+  putStrLn "Data (DD-MM-YYYY): "
   dataInput <- getLine
   validBack dataInput
   putStrLn "Comentários: "
@@ -21,11 +21,11 @@ addEvento 0 = do
   validBack comentario
   if (validData dataInput) && (validTitle titleInput)
     then do
-        insertEvent titleInput dataInput comentario 
+        insertEvent titleInput (swapData(dataInput)) comentario 
         header "Cadastrou com sucesso"
         menuLoop
     else do
-        putStrLn $ "O nome não deve ser vazio (YYYY-MM-DD)" ++ "\n" ++
+        putStrLn $ "O nome não deve ser vazio (DD-MM-YYYY)" ++ "\n" ++
           "a data deve ser no formato" ++ "\n" ++
           "maior que: " 
         currentDayMonth
@@ -50,7 +50,17 @@ addEvento 1 = do
         currentDayMonth
         addEvento 1
 
+addAniversary :: String -> String -> IO()
+addAniversary name date = do 
+ insertEvent ("Aniversário de " ++ name) date ("Aniversário de " ++ name ++ "criado automaticamente pelo sistema")
 
+swapData :: String -> String
+swapData strData = formatTime defaultTimeLocale "%Y-%m-%d" dataObj
+    where
+        dataObj = parseTimeOrError True defaultTimeLocale "%d-%m-%Y" strData :: Day
+
+isDateAfter :: Day -> Day -> Bool
+isDateAfter d1 d2 = compare d1 d2 == GT
 
 currentDayMonth :: IO() 
 currentDayMonth = do 
@@ -61,14 +71,14 @@ currentDayMonth = do
   putStrLn formattedTime
 
 utctimeToString :: UTCTime -> String
-utctimeToString time = formatTime defaultTimeLocale "%Y-%m-%d" time
+utctimeToString time = formatTime defaultTimeLocale "%d-%m-%Y" time
 
 validData :: String -> Bool
 validData x = (validEmpty x) && (isValidDate x)
 
 isValidDate :: String -> Bool
 isValidDate dateStr =
-  case parseTimeM True defaultTimeLocale "%Y-%m-%d" dateStr :: Maybe Day of
+  case parseTimeM True defaultTimeLocale "%d-%m-%Y" dateStr :: Maybe Day of
     Just _  -> True
     Nothing -> False
 
@@ -85,7 +95,6 @@ nextEvents = do
     header str
     putStrLn $ displayEvents2 events (length str)
     menuCalendar
-
 
 previusEvents :: IO()
 previusEvents = do
@@ -175,8 +184,8 @@ deleteEvent 0 number = do
         putStrLn "Evento não encontrada"
         putStrLn padrao
     else do
-        let event = (events !! (number-1)) -- acessa na linsta
-        deleteEventDB (chip_id event)
+        let event = (events !! (number-1)) -- acessa na lista
+        deleteEventDB (event_id event)
         putStrLn "Evento deletado."
         putStrLn padrao
         menuCalendar
@@ -186,9 +195,9 @@ deleteEvent 1 number = do
         putStrLn "Evento não encontrada"
         putStrLn padrao
     else do
-        let event = (events !! (number-1)) -- acessa na linsta
-        deleteEventDB (chip_id event)
-    
+        let event = (events !! (number-1)) -- acessa na lista
+        deleteEventDB (event_id event)
+
 
 editEvent :: IO()
 editEvent = do 
@@ -263,6 +272,6 @@ currentTime = do
   currentTime <- getCurrentTime
   timeZone <- getTimeZone currentTime 
   let localTime = utcToLocalTime timeZone currentTime 
-  let timeString = formatTime defaultTimeLocale "%c" localTime
+  let timeString = formatTime defaultTimeLocale "%c"localTime
   putStrLn $ "   " ++ timeString 
   putStrLn  $ replicate 31 '-'

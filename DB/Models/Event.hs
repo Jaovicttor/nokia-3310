@@ -12,7 +12,7 @@ import Data.Time (UTCTime)
 -- title, event_day, comments, chip_id 
 
 data Event = Event {
-    id :: Int,
+    event_id :: Int,
     title :: String,
     comment :: String,
     event_day :: UTCTime, 
@@ -54,13 +54,13 @@ getPreviusEvent= do
 getEvents :: IO [Event]
 getEvents = do
     conn <- connectCloud
-    query conn "select id,title,comments,event_day, chip_id from events \
+    query conn "select id,title,comments,event_day,chip_id from events \
                 \where chip_id =?" (Only (idChip myChip))
 
 findEvent :: String -> IO [Event]
 findEvent title = do
- let q = "select id,title,comments,event_day, chip_id from events \
-                \where title=? and chip_id =?" 
+ let q = "select id,title,comments,event_day,chip_id from events \
+                \where id=? and chip_id =?" 
  conn <- connectCloud
  query conn q (title,(idChip myChip)) :: IO [Event]
 
@@ -70,6 +70,13 @@ deleteEventDB x = do
   let q = "delete from events where id = ?"
   conn <- connectCloud
   execute conn q (Only x)
+  return ()
+
+deleteContact :: Int -> IO ()
+deleteContact contact_id = do
+  let q = "delete from contacts where id = ? and chip_id = ?"
+  conn <- connectionMyDB
+  execute conn q [contact_id, (idChip myChip)]
   return ()
 
 eventsToString:: [Event] -> Int -> String
