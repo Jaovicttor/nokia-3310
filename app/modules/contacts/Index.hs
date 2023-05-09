@@ -4,6 +4,9 @@ import Data.Time.Format
 import Data.Time.Calendar
 import qualified DB.Models.Contact as Contact
 
+import Data.Time.Format
+import Data.Time.Calendar
+
 main :: IO ()
 main = do
     menuLoop
@@ -17,9 +20,9 @@ menuLoop = do
     putStrLn "0 - Voltar ao Menu"
     choice <- getLine
     case choice of
-        "1" -> listarContato 
-        "2" -> addContato >> menuLoop
-        "3" -> discagemRapida >> menuLoop
+        "1" -> listContact 
+        "2" -> addContact >> menuLoop
+        "3" -> speedDial >> menuLoop
         "0" -> putStrLn "TODO"
         _   -> do
             putStrLn "Opção inválida! Tente novamente."
@@ -27,34 +30,34 @@ menuLoop = do
  
 subMenu :: IO()
 subMenu = do
-  putStrLn "-----Opções-----\n"
+  putStrLn "-----Opções-----"
   putStrLn "1 - Editar Contato"
   putStrLn "2 - Excluir Contato"
   putStrLn "0 - Voltar"
   choice <- getLine
   case choice of
-        "1" -> editarContato >> listarContato
-        "2" -> formExcluirContato >> listarContato
+        "1" -> editContact >> listContact
+        "2" -> formDeleteContact >> listContact
         "0" -> main
         _   -> do
             putStrLn "Opção inválida! Tente novamente."
-            listarContato
+            listContact
 
-listarContato :: IO()
-listarContato = do
-  contatos <- Contact.getContacts
-  let contatos_string = Contact.contactToString contatos 0 
+listContact :: IO()
+listContact = do
+  contact <- Contact.getContacts
+  let contact_string = Contact.contactToString contact 0 
   putStrLn "\n---Contato(s)---\n"
-  putStrLn contatos_string
+  putStrLn contact_string
   subMenu
   
-formExcluirContato :: IO()
-formExcluirContato = do
+formDeleteContact :: IO()
+formDeleteContact = do
   putStrLn "\n---Excluir Contato---\n"
   putStrLn "Digite o  número do contato que deseja excluir"
   n <- getLine
   deleteContact (read n)
-  listarContato
+  listContact
 
 deleteContact :: Int -> IO()
 deleteContact n = do
@@ -65,49 +68,51 @@ deleteContact n = do
     let contact = (contacts !! (n-1))
     Contact.deleteContact (Contact.idContact contact)
     
-discagemRapida :: IO ()
-discagemRapida  = do
-  contatos <- Contact.getSpeedDial
+speedDial :: IO ()
+speedDial  = do
+  contact <- Contact.getSpeedDial
   putStrLn "\n---Contatos de Emergencia---\n"
-  mapM_ (\c -> putStrLn ("- " ++ c)) contatos
+  mapM_ (\c -> putStrLn ("- " ++ c)) contact
 
-addContato :: IO ()
-addContato = do
+addContact :: IO ()
+addContact = do
   putStrLn (" Pressione '-' para retornar \n")
   putStrLn ("Nome: ")
-  nome <- getLine
-  if nome == "-"
+  name <- getLine
+  if name == "-"
     then do
       menuLoop
     else do
       putStrLn ("Telefone: ")
-      telefone <- getLine
-      if length telefone /= 11 && length telefone /= 3
+      phone <- getLine
+      if length phone /= 11 && length phone /= 3
         then do
           putStrLn ("\nNúmero informado é invalido siga o padrão:  XX999999999\n")
-          addContato
+          addContact
         else do
-          putStrLn ("Aniversário (Opcional - YYYY/MM/DD): ")
-          aniversario <- getLine
+          putStrLn ("Aniversário (Opcional - DDMMYYYY): ")
+          birthday <- getLine
+          let birthdayStr = swapData birthday
           putStrLn ("Adicione uma posição para discagem Rápida (0-9) (Opcional): ")
-          discagemStr <- getLine
-          let discagem = if null discagemStr then -1 else read discagemStr
-          let nomeStr = if null nome then telefone else nome
-          if discagem > 9 || discagem < 0
-            then do
-              putStrLn ("\nValor inválido digite um número de 0 a 9\n")
-              addContato
-            else
-              Contact.insertContact nomeStr telefone aniversario discagem 1
+          speedDialStr <- getLine
+          let speedDial = if null speedDialStr then -1 else read speedDialStr
+          let nameStr = if null name then phone else name
+          Contact.insertContact nameStr phone birthdayStr speedDial 1
 
-editarContato :: IO ()
-editarContato = do
+editContact :: IO ()
+editContact = do
   putStrLn "\n---Editar Contato---\n"
-  contatos <- Contact.getContacts
-  let contatos_string = Contact.contactToString contatos 0 
-  putStrLn contatos_string
+  contact <- Contact.getContacts
+  let contact_string = Contact.contactToString contact 0 
+  putStrLn contact_string
   putStrLn "\nDigite o  número do contato que deseja editar:"
   n <- getLine
   deleteContact (read n)
   putStrLn "\n"
-  addContato
+  addContact
+
+
+swapData :: String -> String
+swapData strData = formatTime defaultTimeLocale "%Y%m%d" dataObj
+    where
+        dataObj = parseTimeOrError True defaultTimeLocale "%d%m%Y" strData :: Day
