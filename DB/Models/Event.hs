@@ -71,14 +71,7 @@ deleteEventDB x = do
   conn <- connectCloud
   execute conn q (Only x)
   return ()
-
-deleteContact :: Int -> IO ()
-deleteContact contact_id = do
-  let q = "delete from contacts where id = ? and chip_id = ?"
-  conn <- connectionMyDB
-  execute conn q [contact_id, (idChip myChip)]
-  return ()
-
+  
 eventsToString:: [Event] -> Int -> String
 eventsToString [] _ = []
 eventsToString (x:xs) n = show(n + 1) ++ " - " ++ (singleEventToString x) ++ "\n" ++ eventsToString xs (n+1)
