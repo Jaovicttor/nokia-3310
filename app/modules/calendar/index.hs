@@ -76,7 +76,6 @@ previusEvents = do
     header str
     putStrLn $ displayEvents events (length str)
     waitForKey
-    
 
 editEvent :: IO()
 editEvent = do 
@@ -192,6 +191,22 @@ numberPad = putStrLn $
   
 --todo helper time
 currentTime :: IO String 
+=======
+            replicate (21 + length str) '-' ++ "\n" ++
+            replicate 10 '-' ++ "nokia-3310" ++ replicate (length str + 1) '-' ++ "\n" ++
+            replicate (21 + length str) '-' ++ "\n" ++
+            replicate 10 '-' ++ str ++ replicate 11 '-' ++ "\n" ++
+            replicate (21 + length str) '-' 
+-- helper interface
+numberPad :: IO()
+numberPad = putStrLn $ 
+              "     | 1  |  2  |  3  |\n" ++
+              "     | 4  |  5  |  6  |\n" ++
+              "     | 7  |  8  |  9  |\n" ++
+              "     | *  |  0  |  _  |\n"
+  
+--todo helper time
+currentTime :: IO()
 currentTime = do
   currentTime <- getCurrentTime
   timeZone <- getTimeZone currentTime 
@@ -199,10 +214,6 @@ currentTime = do
   let timeString = formatTime defaultTimeLocale "%c"localTime
   return $ timeString 
   
--- currentTimeString :: IO() -> String
--- currentTimeString x = do 
-  -- time <- x
-  -- return $ time
 
 currentDayMonth :: IO() 
 currentDayMonth = do 
@@ -219,6 +230,19 @@ swapData :: String -> String
 swapData strData = formatTime defaultTimeLocale "%Y-%m-%d" dataObj
     where
         dataObj = parseTimeOrError True defaultTimeLocale "%d-%m-%Y" strData :: Day
+
+-- helper interface
+padrao :: String
+padrao = replicate 31 '-'
+
+validBack :: String -> IO ()
+validBack "_" = menuCalendar
+validBack _ = putStrLn ""
+
+existDbBool :: [Event] -> Bool
+existDbBool [] = False
+existDbBool x = True
+
 
 -- Metodos Auxiliares exclusivos de Eventos
 -- Validação 
@@ -239,6 +263,7 @@ validEmpty title = length title > 0
 
 validTitle :: String -> Bool
 validTitle title = validEmpty title
+
 
 existDbBool :: [Event] -> Bool
 existDbBool [] = False
@@ -312,4 +337,4 @@ nokia hora =
   "    ╠╠╬╣▒╚░╚╚▒╣Φ╩╚╝╝▀▀╠╪╬╠≥╠╠╣╬╬╬⌐    " ++     "\n" ++                                    
   "    ╩╠╠╬╬╠╬╬╬╬╬╠▒╦╗╦╬╣╬╬╬╬╬╬╬╬╣╬╬     " ++     "\n" ++ 
   replicate 110 '-'
- 
+
