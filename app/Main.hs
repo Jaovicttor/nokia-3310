@@ -10,5 +10,6 @@ import qualified App.Modules.Calendar.Index as Calendar
 
 main :: IO()
 main = do 
- Message.mainMessage           
+ --Message.mainMessage
+ Calendar.menuCalendar           
   

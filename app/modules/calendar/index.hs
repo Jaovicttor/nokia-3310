@@ -131,20 +131,7 @@ deleteEvent 1 number = do
 
 menuLoop :: IO ()
 menuLoop = do
-    -- putStrLn $ replicate 31 '-'        ++ "\n" ++
-    --  "     " ++ "Selecione uma opção:" ++ "\n" ++
-    --  replicate 31 '-'                  ++ "\n" ++
-    --  "| 1 - Adicionar Evento        |" ++ "\n" ++
-    --  "| 2 - Listar todos os Eventos |" ++ "\n" ++
-    --  "| 3 - Listar próximos Eventos |" ++ "\n" ++
-    --  "| 4 - Listar Eventos passados |" ++ "\n" ++
-    --  "| 5 - Editar Evento           |" ++ "\n" ++
-    --  "| 6 - Excluir Evento          |" ++ "\n" ++
-    --  "| 0 - Voltar                  |" ++ "\n" ++
-    --  replicate 31 '-' 
-    -- numberPad
     putStrLn "Digite: "
-
     choice <- getLine
     case choice of
         "1" -> header "Adicionar Evento" >> addEvento 0
@@ -184,13 +171,6 @@ header str = putStrLn  $
 block :: Char
 --block = '\x2588'
 block = '-'
--- helper interface
-numberPad :: IO()
-numberPad = putStrLn $ 
-              "  \x2588  | 1  |  2  |  3  |\n" ++
-              "  \x2588  | 4  |  5  |  6  |\n" ++
-              "  \x2588  | 7  |  8  |  9  |\n" ++
-              "  \x2588  | *  |  0  |  _  |\n"
   
 --todo helper time
 currentTime :: IO String 
