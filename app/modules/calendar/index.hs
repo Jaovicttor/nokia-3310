@@ -92,8 +92,8 @@ editEvent = do
     event_number <- getLine
     validBack event_number
     putStrLn padrao
-    deleteEvent 1 (read event_number)
     addEvento 1
+    deleteEvent 1 (read event_number)
     putStrLn $ padrao ++ "\n" ++ "Editou com sucesso"
 
 formDeleteEvent :: IO()
@@ -128,7 +128,8 @@ deleteEvent 1 number = do
     else do
         let event = (events !! (number-1)) -- acessa na lista
         deleteEventDB (event_id event)
-
+        
+-- menu
 menuLoop :: IO ()
 menuLoop = do
     putStrLn "Digite: "
@@ -144,12 +145,6 @@ menuLoop = do
         _   -> do
             putStrLn "Opção inválida! Tente novamente."
             menuLoop
-
-waitForKey :: IO ()
-waitForKey = do
-  putStrLn "Precione qualquer tecla para continuar"
-  _ <- getLine
-  putStrLn "Continuando..."
 
 menuCalendar :: IO ()
 menuCalendar = do
@@ -180,7 +175,6 @@ currentTime = do
   let localTime = utcToLocalTime timeZone currentTime 
   let timeString = formatTime defaultTimeLocale "%c"localTime
   return $ timeString 
-  
 
 currentDayMonth :: IO() 
 currentDayMonth = do 
@@ -244,6 +238,12 @@ displaySingleEvent event =
           padrao
 
 -- helper interface
+waitForKey :: IO ()
+waitForKey = do
+  putStrLn "Precione qualquer tecla para continuar"
+  _ <- getLine
+  putStrLn "Continuando..."
+
 padrao :: String
 padrao = replicate 110 '-'
 
