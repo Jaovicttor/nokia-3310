@@ -72,7 +72,6 @@ nextEvents = do
   header str
   putStrLn $ displayEvents sortedEvents (length str)
   waitForKey   
-    
 
 previusEvents :: IO()
 previusEvents = do
@@ -164,8 +163,6 @@ waitForKey = do
   putStrLn "Precione qualquer tecla para continuar"
   _ <- getLine
   putStrLn "Continuando..."
-  
-
 
 menuCalendar :: IO ()
 menuCalendar = do
@@ -204,10 +201,6 @@ currentTime = do
   let timeString = formatTime defaultTimeLocale "%c"localTime
   return $ timeString 
   
--- currentTimeString :: IO() -> String
--- currentTimeString x = do 
-  -- time <- x
-  -- return $ time
 
 currentDayMonth :: IO() 
 currentDayMonth = do 
