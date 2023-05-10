@@ -12,4 +12,3 @@ main :: IO()
 main = do 
  --Message.mainMessage
  Calendar.menuCalendar           
-  
