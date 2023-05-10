@@ -1,3 +1,4 @@
+module App.Shared.Main.Helper.Timer where
 import Data.Time
 import Data.Time.LocalTime
 
@@ -15,4 +16,3 @@ isCurrentTime :: String -> IO Bool
 isCurrentTime timeString = do
     current <- getCurrentTimeString
     return (current == timeString)
-

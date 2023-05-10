@@ -5,13 +5,15 @@ import Data.Time
 import App.Shared.Main.Helper.Timer
 import Data.Time.Format (defaultTimeLocale, formatTime)
 import Data.Char
+import Data.List (sortBy)
+import Data.Ord (comparing)
 
 addEvento :: Int ->IO ()
 addEvento 0 = do
   putStrLn "Titulo: "
   titleInput <- getLine
   validBack titleInput
-  putStrLn "Data (DD-MM-YYYY): "
+  putStrLn "Data (DD-MM-AAAA): "
   dataInput <- getLine
   validBack dataInput
   putStrLn "Comentários: "
@@ -23,7 +25,7 @@ addEvento 0 = do
         header "Cadastrou com sucesso"
         menuLoop
     else do
-        putStrLn $ "O nome não deve ser vazio (DD-MM-YYYY)" ++ "\n" ++
+        putStrLn $ "O nome não deve ser vazio (DD-MM-AAAA)" ++ "\n" ++
           "a data deve ser no formato" ++ "\n" ++
           "maior que: " 
         currentDayMonth
@@ -32,7 +34,7 @@ addEvento 1 = do
   putStrLn "Titulo: "
   titleInput <- getLine
   validBack titleInput
-  putStrLn "Data (YYYY-MM-DD): "
+  putStrLn "Data (DD-MM-AAAA): "
   dataInput <- getLine
   validBack dataInput
   putStrLn "Comentários: "
@@ -42,7 +44,7 @@ addEvento 1 = do
     then do
         insertEvent titleInput dataInput comentario
     else do
-        putStrLn $ "O nome não deve ser vazio (YYYY-MM-DD)" ++ "\n" ++
+        putStrLn $ "O nome não deve ser vazio (DD-MM-AAAA):" ++ "\n" ++
           "a data deve ser no formato" ++ "\n" ++
           "maior que: " 
         currentDayMonth
@@ -52,29 +54,33 @@ addAniversary :: String -> String -> IO()
 addAniversary name date = do 
  insertEvent ("Aniversário de " ++ name) date ("Aniversário de " ++ name ++ "criado automaticamente pelo sistema")
 
+    
 showAllEvents :: IO() 
-showAllEvents = do 
-    events <- getEvents
-    let str = "Todos os Eventos2"
-    header str
-    putStrLn $ displayEvents events (length str)
-    menuCalendar
+showAllEvents = do
+  events <- getEvents 
+  let sortedEvents = sortBy (comparing event_day) events
+      str = "Todos os Eventos"
+  header str
+  putStrLn $ displayEvents sortedEvents (length str)
+  waitForKey   
 
-nextEvents :: IO()
+nextEvents :: IO ()
 nextEvents = do
-    events <- getNextEvent
-    let str = "Próximos Eventos"
-    header str
-    putStrLn $ displayEvents events (length str)
-    menuCalendar
+  events <- getNextEvent
+  let sortedEvents = sortBy (comparing event_day) events
+      str = "Próximos Eventos"
+  header str
+  putStrLn $ displayEvents sortedEvents (length str)
+  waitForKey   
 
 previusEvents :: IO()
 previusEvents = do
-    events<- getPreviusEvent
-    let str = "Eventos Anteriores"
-    header str
-    putStrLn $ displayEvents events (length str)
-    menuCalendar
+  events<- getPreviusEvent
+  let sortedEvents = sortBy (comparing event_day) events
+      str = "Eventos Anteriores"
+  header str
+  putStrLn $ displayEvents sortedEvents (length str)
+  waitForKey  
 
 editEvent :: IO()
 editEvent = do 
@@ -86,8 +92,8 @@ editEvent = do
     event_number <- getLine
     validBack event_number
     putStrLn padrao
-    deleteEvent 1 (read event_number)
     addEvento 1
+    deleteEvent 1 (read event_number)
     putStrLn $ padrao ++ "\n" ++ "Editou com sucesso"
 
 formDeleteEvent :: IO()
@@ -106,7 +112,7 @@ deleteEvent :: Int -> Int-> IO()
 deleteEvent 0 number = do
     events <- getEvents
     if(number <= 0 || number > length events) then do -- verificação se valido no index
-        putStrLn "Evento não encontrada"
+        putStrLn "Evento não encontrado"
         putStrLn padrao
     else do
         let event = (events !! (number-1)) -- acessa na lista
@@ -117,28 +123,16 @@ deleteEvent 0 number = do
 deleteEvent 1 number = do
     events <- getEvents
     if(number <= 0 || number > length events) then do -- verificação se valido no index
-        putStrLn "Evento não encontrada"
+        putStrLn "Evento não encontrado"
         putStrLn padrao
     else do
         let event = (events !! (number-1)) -- acessa na lista
         deleteEventDB (event_id event)
-
+        
+-- menu
 menuLoop :: IO ()
 menuLoop = do
-    putStrLn $ replicate 31 '-'        ++ "\n" ++
-     "     " ++ "Selecione uma opção:" ++ "\n" ++
-     replicate 31 '-'                  ++ "\n" ++
-     "| 1 - Adicionar Evento        |" ++ "\n" ++
-     "| 2 - Listar todos os Eventos |" ++ "\n" ++
-     "| 3 - Listar próximos Eventos |" ++ "\n" ++
-     "| 4 - Listar Eventos passados |" ++ "\n" ++
-     "| 5 - Editar Evento           |" ++ "\n" ++
-     "| 6 - Excluir Evento          |" ++ "\n" ++
-     "| 0 - Voltar                  |" ++ "\n" ++
-     replicate 31 '-' 
-    numberPad
     putStrLn "Digite: "
-
     choice <- getLine
     case choice of
         "1" -> header "Adicionar Evento" >> addEvento 0
@@ -154,35 +148,33 @@ menuLoop = do
 
 menuCalendar :: IO ()
 menuCalendar = do
-    header "Calendário"
-    currentTime
+    strTime <- currentTime
+    putStrLn $ nokia strTime
+    -- header "Calendário"
+    -- currentTime
     menuLoop
 
 -- helper interface
 header :: String -> IO()
 header str = putStrLn  $ 
-            replicate (21 + length str) '-' ++ "\n" ++
-            replicate 10 '-' ++ "nokia-3310" ++ replicate (length str + 1) '-' ++ "\n" ++
-            replicate (21 + length str) '-' ++ "\n" ++
-            replicate 10 '-' ++ str ++ replicate 11 '-' ++ "\n" ++
-            replicate (21 + length str) '-' 
--- helper interface
-numberPad :: IO()
-numberPad = putStrLn $ 
-              "     | 1  |  2  |  3  |\n" ++
-              "     | 4  |  5  |  6  |\n" ++
-              "     | 7  |  8  |  9  |\n" ++
-              "     | *  |  0  |  _  |\n"
+            replicate (21 + length str) block ++ "\n" ++
+            replicate 10 block ++ "nokia-3310" ++ replicate (length str + 1) block ++ "\n" ++
+            replicate (21 + length str) block ++ "\n" ++
+            replicate 10 block ++ str ++ replicate 11 block ++ "\n" ++
+            replicate (21 + length str) block
+
+block :: Char
+--block = '\x2588'
+block = '-'
   
 --todo helper time
-currentTime :: IO()
+currentTime :: IO String 
 currentTime = do
   currentTime <- getCurrentTime
   timeZone <- getTimeZone currentTime 
   let localTime = utcToLocalTime timeZone currentTime 
   let timeString = formatTime defaultTimeLocale "%c"localTime
-  putStrLn $ "   " ++ timeString 
-  putStrLn  $ replicate 31 '-'
+  return $ timeString 
 
 currentDayMonth :: IO() 
 currentDayMonth = do 
@@ -199,18 +191,6 @@ swapData :: String -> String
 swapData strData = formatTime defaultTimeLocale "%Y-%m-%d" dataObj
     where
         dataObj = parseTimeOrError True defaultTimeLocale "%d-%m-%Y" strData :: Day
-
--- helper interface
-padrao :: String
-padrao = replicate 31 '-'
-
-validBack :: String -> IO ()
-validBack "_" = menuCalendar
-validBack _ = putStrLn ""
-
-existDbBool :: [Event] -> Bool
-existDbBool [] = False
-existDbBool x = True
 
 -- Metodos Auxiliares exclusivos de Eventos
 -- Validação 
@@ -232,6 +212,10 @@ validEmpty title = length title > 0
 validTitle :: String -> Bool
 validTitle title = validEmpty title
 
+existDbBool :: [Event] -> Bool
+existDbBool [] = False
+existDbBool x = True
+
 -- Listagem 
 displayEvents :: [Event] -> Int -> String 
 displayEvents [] x  = "Não há eventos"
@@ -252,3 +236,58 @@ displaySingleEvent event =
           "Comentário: " ++ comment event ++ "\n" ++
           "Data: " ++ utctimeToString (event_day event) ++ "\n" ++
           padrao
+
+-- helper interface
+waitForKey :: IO ()
+waitForKey = do
+  putStrLn "Precione qualquer tecla para continuar"
+  _ <- getLine
+  putStrLn "Continuando..."
+
+padrao :: String
+padrao = replicate 110 '-'
+
+validBack :: String -> IO ()
+validBack "-" = menuCalendar
+validBack _ = putStrLn ""
+
+nokia :: String -> String
+nokia hora =
+  replicate 110 '-' ++  "\n " ++  
+  "    -╤▓▓▓▓▓▓▓▓██████████████▓▓╦       " ++     "\n" ++                
+  "  .╠╬╣█▓▓▓█████████████████████╣▒     " ++     "\n" ++                  
+  "  ╩╬╩█▓▓█▓█████████████████████╣╣▒    " ++     "\n" ++       
+  "  ║╬╣█▓█████████████████████████╣╬    " ++     "\n" ++                
+  " ]╣╣█▓██████████████████████████╣╬⌐   " ++     "\n" ++                
+  " ║╬╣█▓███████████████████████████▓▌   " ++     replicate 10 ' ' ++  hora ++ replicate 10 ' ' ++ "\n" ++       
+  " ║╬▓█████████████████████████████║╬   " ++     "\n" ++                                                    
+  " ║╬██████████▌╬Γ╝╫Γ▀▌▀╚██████████▌╬   " ++      "        ██████████████Opções█████████████\n"     ++                              
+  " ║▌█▓█████▓███████████████████████▌⌐  " ++      "         | 1 - Adicionar Evento        |\n" ++
+  " ║╣███▓▓▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▓███Å▒  " ++      "         | 2 - Listar todos os Eventos |\n" ++
+  " ║╬███░---░░░░░░░░░░░░░░░░░░-░╣███▓▒  " ++      "         | 3 - Listar próximos Eventos |\n" ++
+  " ║╣███▒░,░░░░░░░░░░░░░≥░░░░░░░╠████▌  " ++      "         | 4 - Listar Eventos passados |\n" ++
+  " ║╣██▓▒░»░░░░░░░░░░░░░░░░░░░░░│████▌  " ++      "         | 5 - Editar Evento           |\n" ++
+  " ║╬███▒░░░░░░░░░░░░░░░░░≥░░░░░│███▓▌  " ++      "         | 6 - Excluir Evento          |\n" ++
+  " ║▌▓██▒░░░░░░░░░░░░░░░░░░░░░∩░║███▓▌  " ++      "         | 0 - Voltar                  |\n" ++
+  " ║╣███▌░░░░░░░░░░░░░░░░░░░░░⌐\"╟███▌  " ++      "         █████████████████████████████████\n"     ++             
+  " ╠╬▓██▌░--░░░░░░░░░░░░░░░░░░~:╟██▌▓▌  " ++     "\n" ++               
+  " ╠╬╣███▄▄▄▄▄▄▄▄▄▄▄░▄▄▄▄▄▄▄▄▄▄▄███╬▓▌  " ++     "\n" ++               
+  " ╠╬╬╬▓█▓████████████████████████▒╣╬▌  " ++     "\n" ++               
+  " ╠╬╬╬╬▓█▌╣╬╣████▓▓▓█████╣▓██▓▓█▒╣╣▓▒  " ++     "\n" ++               
+  " ╠╬╬╣╬╣███▄╠╚╚▀╠╠║╦╣╬╬▒╚╩╠╣▓██╣╣╣╣╬▒  " ++     "\n" ++               
+  " ║╬╬╬╬╝╬╬▓▀███▓▓█▓▓▓█▓▓███▀▓▄█╠╣╣╣╬▒  " ++     "\n" ++               
+  " ║╬╬╬╬╪╣╬╠▀█████▀▓▓██▀███▓╬╣╣▀║╣╣╣╬░  " ++     "\n" ++                                                        
+  " ]╬╬╬╬╬╣╬╠╠╚╠╬╣╬╠╬╠║╩╬╬▒╬╠╠╠╣╣╬╣╬╣╬   " ++     "\n" ++                                    
+  "  ╠╬╬╣╣╣▓▄╩╣╬╬╬╬╬╣▒╣╣╬╬╬╣╝╬╣▓██▌╬╣╬   " ++     "\n" ++                                    
+  "  ╠╬╬╬╩╩╚╩▀█▓▒╬▒╣▀▓▓███▓╬╬╩╩╠╠╬╣╬╬╬   " ++     "\n" ++                                    
+  "  ╠╬╬╬╬▒╦╦╬╣╣╣╣╬╠╦╦╧╠╠╬╣╬╬▒▒▒╣╣╣╬╬▒   " ++     "\n" ++                                    
+  "  ╠╬╬Φ╩║▓██▄╬╠╠╠╠╠╬╬╠╠╠╠╠╫╣▓▓▌█▌╣╣▒   " ++     "\n" ++                                    
+  "  ║╠╬╣╬╩ü╠╚╩╬╠╝╠╠╚╩╚║▀▀╬╬╠≥≡≡╠╬╣╣╬░   " ++     "\n" ++                                    
+  "  ]╠╠╬╩╠╠╠╩╬╬╬╬╣╬╦╣╬╬╬╬╬╬╣╬╠▄▄▄╣╣╬    " ++     "\n" ++                                    
+  "   ╠╬╠╚▒╝╝▀██╣╣╣╣╣▓███▓╬╬▀╬▀▀▒╩╣╬╬    " ++     "\n" ++                                    
+  "   ╠╠╬╬╦▒▒╠║╬╣╬╬╠╦░╩╠╠╬╬▒╦╗╣╦╣╬╬╬▒    " ++     "\n" ++                                    
+  "   ╚╠╬╬╟╝╣╣▄╠╣╬╬╩╝╬╬╩╣╬╬╬╫▓█▀█║╣╬▒    " ++     "\n" ++                                    
+  "    ╠╠╬╣▒╚░╚╚▒╣Φ╩╚╝╝▀▀╠╪╬╠≥╠╠╣╬╬╬⌐    " ++     "\n" ++                                    
+  "    ╩╠╠╬╬╠╬╬╬╬╬╠▒╦╗╦╬╣╬╬╬╬╬╬╬╬╣╬╬     " ++     "\n" ++ 
+  replicate 110 '-'
+ 

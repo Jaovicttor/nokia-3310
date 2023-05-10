@@ -71,10 +71,10 @@ deleteEventDB x = do
   conn <- connectCloud
   execute conn q (Only x)
   return ()
-
+  
 eventsToString:: [Event] -> Int -> String
 eventsToString [] _ = []
 eventsToString (x:xs) n = show(n + 1) ++ " - " ++ (singleEventToString x) ++ "\n" ++ eventsToString xs (n+1)
 
 singleEventToString :: Event -> String
-singleEventToString event = (formatTime defaultTimeLocale "%Y-%m-%d" (event_day event)) ++ " - " ++  "T: "++ (title event) 
+singleEventToString event = (formatTime defaultTimeLocale "%d-%m-%Y" (event_day event)) ++ " - " ++ (title event) 
