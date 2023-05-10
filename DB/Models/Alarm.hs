@@ -34,13 +34,13 @@ insertAlarm time title chip_id = do
 getAlarms::IO[Alarm]
 getAlarms = do
       conn <- connectionMyDB
-      let chip_id = (idChip chipAtual)
+      let chip_id = (idChip myChip)
       query conn "SELECT * FROM alarms WHERE chip_id = ? order by deadline " (Only chip_id)
 
 checkAlarm :: TimeOfDay -> IO Bool 
 checkAlarm time = do
   conn <- connectionMyDB
-  let chip_id = idChip chipAtual
+  let chip_id = idChip myChip
   result <- query conn "SELECT * FROM alarms WHERE chip_id = ? AND deadline = ?" (chip_id, time) :: IO [Alarm]
   if null result
     then return True
@@ -49,7 +49,7 @@ checkAlarm time = do
 deleteAlarms::TimeOfDay-> IO()
 deleteAlarms timer = do
     conn <- connectionMyDB
-    let chip_id = (idChip chipAtual)
+    let chip_id = (idChip myChip)
     let q =  "DELETE FROM alarms WHERE chip_id = ? AND deadline = ?"
     execute conn q (chip_id,timer)
     return ()
@@ -57,7 +57,7 @@ deleteAlarms timer = do
 updateAlarms:: TimeOfDay -> TimeOfDay -> String -> IO()
 updateAlarms oldTimer currentTimer title = do 
     conn <- connectionMyDB
-    let chip_id = (idChip chipAtual)
+    let chip_id = (idChip myChip)
     let q = "UPDATE alarms SET deadline = ?,title = ? WHERE chip_id = ? AND deadline = ?"
     execute conn q (currentTimer,title,chip_id,oldTimer)
     return ()
@@ -65,7 +65,7 @@ updateAlarms oldTimer currentTimer title = do
 updateTimerAlarms:: TimeOfDay -> TimeOfDay -> IO()
 updateTimerAlarms oldTimer currentTimer  = do 
     conn <- connectionMyDB
-    let chip_id = (idChip chipAtual)
+    let chip_id = (idChip myChip)
     let q = "UPDATE alarms SET deadline = ? WHERE chip_id = ? AND deadline = ?"
     execute conn q (currentTimer,chip_id,oldTimer)
     return ()
@@ -73,7 +73,7 @@ updateTimerAlarms oldTimer currentTimer  = do
 updateTitleAlarms::TimeOfDay -> String -> IO()
 updateTitleAlarms timer title = do 
     conn <- connectionMyDB
-    let chip_id = (idChip chipAtual)
+    let chip_id = (idChip myChip)
     let q = "UPDATE alarms SET title = ? WHERE chip_id = ? AND deadline = ?"
     execute conn q (title,chip_id,timer)
     return ()
@@ -81,7 +81,7 @@ updateTitleAlarms timer title = do
 activeAlarms::TimeOfDay-> IO()
 activeAlarms timer = do
     conn <- connectionMyDB
-    let chip_id = (idChip chipAtual)
+    let chip_id = (idChip myChip)
     let q =  "SELECT active from alarms WHERE chip_id =? AND deadline = ?" 
     result <- query conn q (chip_id, timer)
     let active = if head result == [True] then "UPDATE alarms SET active = False WHERE chip_id = ? AND deadline = ?"
@@ -94,7 +94,7 @@ activeAlarms timer = do
 verificationAlarms :: TimeOfDay -> IO[Alarm]
 verificationAlarms timer = do
     conn <- connectionMyDB
-    let chip_id = idChip chipAtual
+    let chip_id = idChip myChip
     result <- query conn "SELECT * from alarms WHERE chip_id = ? AND deadline = ? AND active = True" (chip_id, timer)
     close conn
     return result

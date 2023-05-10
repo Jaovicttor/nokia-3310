@@ -45,7 +45,7 @@ addAlarm = do
                 then do 
                     putStrLn "Digite o título do alarme:"
                     title <- getLine 
-                    insertAlarm t title (idChip chipAtual)
+                    insertAlarm t title (idChip myChip)
                     putStrLn "Alarme adicionado com sucesso!"
                     mainAlarm
             else do
