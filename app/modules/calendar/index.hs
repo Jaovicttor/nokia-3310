@@ -11,7 +11,7 @@ addEvento 0 = do
   putStrLn "Titulo: "
   titleInput <- getLine
   validBack titleInput
-  putStrLn "Data (DD-MM-YYYY): "
+  putStrLn "Data (DD-MM-AAAA): "
   dataInput <- getLine
   validBack dataInput
   putStrLn "Comentários: "
@@ -23,7 +23,7 @@ addEvento 0 = do
         header "Cadastrou com sucesso"
         menuLoop
     else do
-        putStrLn $ "O nome não deve ser vazio (DD-MM-YYYY)" ++ "\n" ++
+        putStrLn $ "O nome não deve ser vazio (DD-MM-AAAA)" ++ "\n" ++
           "a data deve ser no formato" ++ "\n" ++
           "maior que: " 
         currentDayMonth
@@ -32,8 +32,7 @@ addEvento 1 = do
   putStrLn "Titulo: "
   titleInput <- getLine
   validBack titleInput
-  putStrLn "Data (DD-MM-YYYY): "
-
+  putStrLn "Data (DD-MM-AAAA): "
   dataInput <- getLine
   validBack dataInput
   putStrLn "Comentários: "
@@ -43,7 +42,7 @@ addEvento 1 = do
     then do
         insertEvent titleInput dataInput comentario
     else do
-        putStrLn $ "O nome não deve ser vazio (DD-MM-YYYY):" ++ "\n" ++
+        putStrLn $ "O nome não deve ser vazio (DD-MM-AAAA):" ++ "\n" ++
           "a data deve ser no formato" ++ "\n" ++
           "maior que: " 
         currentDayMonth
@@ -108,7 +107,7 @@ deleteEvent :: Int -> Int-> IO()
 deleteEvent 0 number = do
     events <- getEvents
     if(number <= 0 || number > length events) then do -- verificação se valido no index
-        putStrLn "Evento não encontrada"
+        putStrLn "Evento não encontrado"
         putStrLn padrao
     else do
         let event = (events !! (number-1)) -- acessa na lista
@@ -119,7 +118,7 @@ deleteEvent 0 number = do
 deleteEvent 1 number = do
     events <- getEvents
     if(number <= 0 || number > length events) then do -- verificação se valido no index
-        putStrLn "Evento não encontrada"
+        putStrLn "Evento não encontrado"
         putStrLn padrao
     else do
         let event = (events !! (number-1)) -- acessa na lista
@@ -174,7 +173,7 @@ menuCalendar = do
 header :: String -> IO()
 header str = putStrLn  $ 
             replicate (21 + length str) block ++ "\n" ++
-            replicate 7 block ++ "nokia-3310" ++ replicate (length str + 4) block ++ "\n" ++
+            replicate 10 block ++ "nokia-3310" ++ replicate (length str + 1) block ++ "\n" ++
             replicate (21 + length str) block ++ "\n" ++
             replicate 10 block ++ str ++ replicate 11 block ++ "\n" ++
             replicate (21 + length str) block
@@ -296,7 +295,7 @@ padrao :: String
 padrao = replicate 110 '-'
 
 validBack :: String -> IO ()
-validBack "_" = menuCalendar
+validBack "-" = menuCalendar
 validBack _ = putStrLn ""
 
 nokia :: String -> String
