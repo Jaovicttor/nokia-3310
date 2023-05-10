@@ -5,6 +5,8 @@ import Data.Time
 import App.Shared.Main.Helper.Timer
 import Data.Time.Format (defaultTimeLocale, formatTime)
 import Data.Char
+import Data.List (sortBy)
+import Data.Ord (comparing)
 
 addEvento :: Int ->IO ()
 addEvento 0 = do
@@ -52,31 +54,34 @@ addAniversary :: String -> String -> IO()
 addAniversary name date = do 
  insertEvent ("Aniversário de " ++ name) date ("Aniversário de " ++ name ++ "criado automaticamente pelo sistema")
 
+    
 showAllEvents :: IO() 
-showAllEvents = do 
-    events <- getEvents
-    let str = "Todos os Eventos"
-    header str
-    putStrLn $ displayEvents events (length str)
-    waitForKey
+showAllEvents = do
+  events <- getEvents 
+  let sortedEvents = sortBy (comparing event_day) events
+      str = "Todos os Eventos"
+  header str
+  putStrLn $ displayEvents sortedEvents (length str)
+  waitForKey   
 
-nextEvents :: IO()
+nextEvents :: IO ()
 nextEvents = do
-    events <- getNextEvent
-    let str = "Próximos Eventos"
-    header str
-    putStrLn $ displayEvents events (length str)
-    waitForKey
+  events <- getNextEvent
+  let sortedEvents = sortBy (comparing event_day) events
+      str = "Próximos Eventos"
+  header str
+  putStrLn $ displayEvents sortedEvents (length str)
+  waitForKey   
     
 
 previusEvents :: IO()
 previusEvents = do
-    events<- getPreviusEvent
-    let str = "Eventos Anteriores"
-    header str
-    putStrLn $ displayEvents events (length str)
-    waitForKey
-    
+  events<- getPreviusEvent
+  let sortedEvents = sortBy (comparing event_day) events
+      str = "Eventos Anteriores"
+  header str
+  putStrLn $ displayEvents sortedEvents (length str)
+  waitForKey  
 
 editEvent :: IO()
 editEvent = do 
