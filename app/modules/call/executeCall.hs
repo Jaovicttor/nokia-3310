@@ -39,16 +39,6 @@ printCallTimeCounter seconds = do
         clearLine
         threadDelay delay
 
-maybeCancelCall::IO(Maybe String)
-maybeCancelCall = do
-    hSetBuffering stdin NoBuffering
-    hSetBuffering stdout NoBuffering
-    putStrLn "You have 5 seconds to enter your name:"
-    maybeName <- timeout (5 * 1000000) getLine
-    case maybeName of
-        Nothing -> return Nothing
-        Just name -> return (Just name)
-
 execute:: Chip -> String -> IO()
 execute my_chip receiver_number = do
     receiver_chip <- findByNumber receiver_number

@@ -9,11 +9,10 @@ import DB.Models.Chip
 import Data.Maybe (fromMaybe)
 
 data Contact = Contact {
-    idContact:: Int,
-    name::  String,
-    phone:: String,
-    speed_dial:: Int
-    
+  idContact:: Int,
+  name::  String,
+  phone:: String,
+  speed_dial:: Int
 } deriving (Generic, FromRow,Show, Read, Eq)
 
 createContacts :: IO()
@@ -30,7 +29,6 @@ createContacts = do
 
     return ()
 
-
 insertContact :: String -> String -> String -> Int -> Int -> IO ()
 insertContact name phone birthday speed_dial chip_id = do
  let q = "insert into contacts (name, phone, birthday, speed_dial, chip_id ) values (?,?,?,?,?)"
@@ -40,12 +38,11 @@ insertContact name phone birthday speed_dial chip_id = do
 
 findByPhone::Int -> String -> IO (Maybe String)
 findByPhone chip_id phone = do
-    let q = "select name from contacts where chip_id = ? and phone = ?"
-    conn <- connectionMyDB 
-    result <- query conn q (chip_id, phone)
-    case result of
-        [Contact {name = name}] -> return (Just name)
-        _                       -> return Nothing
+  let q = "select id, name, phone, speed_dial from contacts where chip_id = ? and phone = ?"
+  conn <- connectionMyDB 
+  result <- query conn q (chip_id, phone) :: IO [Contact]
+  if length result > 0 then return (Just (name (head result)))
+  else return Nothing
 
 getContacts :: IO [Contact]
 getContacts = do
