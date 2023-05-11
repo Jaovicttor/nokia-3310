@@ -29,6 +29,8 @@ createMessages = do
                     \message_date timestamp NOT NULL,\
                     \sented_by int,\
                     \received_by int,\
+                    \available_sented_by boolean DEFAULT True,\
+                    \available_received_by  boolean DEFAULT True,\
                     \FOREIGN KEY(sented_by) REFERENCES chips(id),\
                     \FOREIGN KEY(received_by) REFERENCES chips(id));"
     return ()
