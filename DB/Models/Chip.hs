@@ -11,17 +11,10 @@ data Chip = Chip {
     owner:: String,
     number:: String,
     isOn :: Bool
-<<<<<<< HEAD
-} deriving (Generic, FromRow, Show, Read, Eq)
-
-myChip :: Chip
-myChip = Chip {idChip = 1, owner = "Joao Victor", number = "79988686084", isOn = True }
-=======
 } deriving (Generic, FromRow,Show, Read, Eq)
 
 myChip :: Chip
 myChip = Chip{idChip = 1, owner = "Joao Victor", number = "12345678910", isOn = True }
->>>>>>> ab31347673602a826e04493910d476b7ca7f4a12
 
 createChips :: IO()
 createChips = do
@@ -40,7 +33,6 @@ insertChip owner number isOn = do
  execute conn q (owner, number, isOn)
  return ()
 
-<<<<<<< HEAD
 findByNumber:: String -> IO(Maybe Chip)
 findByNumber number = do
     let q = "select * from chips where number = ?"
@@ -48,7 +40,7 @@ findByNumber number = do
     result <- query conn q (Only number):: IO[Chip]
     if length result == 0 then return Nothing
     else return (Just (head result))
-=======
+    
 getChips:: IO [Chip]
 getChips = do
     conn <- connectionMyDB
@@ -58,4 +50,3 @@ getChipByNumber :: String -> IO [Chip]
 getChipByNumber number = do
     conn <- connectionMyDB
     query conn "SELECT * FROM chips WHERE number = ?" (Only number)
->>>>>>> ab31347673602a826e04493910d476b7ca7f4a12

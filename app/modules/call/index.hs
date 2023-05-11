@@ -10,7 +10,7 @@ import DB.Models.Call
 
 printeHeader :: IO()
 printeHeader = do
-  putStrLn "\n--------------------------"
+  putStrLn "\n----------------------------"
   putStrLn "---------NOKIA-3310---------"
   putStrLn "----------------------------"
   putStrLn "----------chamadas----------"
