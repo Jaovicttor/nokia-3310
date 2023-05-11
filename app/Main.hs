@@ -5,5 +5,4 @@ import qualified App.Modules.Contacts.Index as Contact
 
 main :: IO()
 main = do 
- Contact.main 
-      
+ Contact.main     
