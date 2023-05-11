@@ -7,7 +7,7 @@ localDB = defaultConnectInfo {
     connectHost = "localhost",
     connectDatabase = "nokia-3310",
     connectUser = "postgres",
-    connectPassword = "thalles77",
+    connectPassword = "postgres",
     connectPort = 5432
 }
 

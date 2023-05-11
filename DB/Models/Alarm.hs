@@ -8,6 +8,8 @@ import GHC.Generics (Generic)
 import DB.Models.Chip
 import Data.Time.LocalTime
 import Data.Time.Format
+import Data.Maybe (listToMaybe)
+
 
 data Alarm = Alarm { id :: Int, time :: TimeOfDay, title :: String, active :: Bool,chip_id::Int }
   deriving (Show, Generic,FromRow)
@@ -18,7 +20,7 @@ createAlarms = do
     execute_ conn "CREATE TABLE IF NOT EXISTS alarms (\
                    \id SERIAL PRIMARY KEY,\
                     \deadline time NOT NULL,\
-                    \title VARCHAR(255) NOT NULL,\
+                    \title VARCHAR(100) NOT NULL,\
                     \active boolean NOT NULL,\
                     \chip_id int NOT NULL,\
                     \FOREIGN KEY(chip_id) REFERENCES chips(id));"
@@ -98,3 +100,11 @@ verificationAlarms timer = do
     result <- query conn "SELECT * from alarms WHERE chip_id = ? AND deadline = ? AND active = True" (chip_id, timer)
     close conn
     return result
+
+
+getTitleAlarms :: TimeOfDay -> IO String
+getTitleAlarms time = do
+    conn <- connectionMyDB
+    let chip_id = idChip myChip
+    [Only title] <- query conn "SELECT title from alarms WHERE chip_id = ? AND deadline = ?" (chip_id, time)
+    return title
