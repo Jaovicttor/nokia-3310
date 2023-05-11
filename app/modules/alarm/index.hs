@@ -6,6 +6,7 @@ import App.Shared.Main.Helper.Timer
 import DB.Models.Alarm
 import DB.Models.Chip
 import App.Modules.Alarm.MainAlarm
+
 mainAlarm::IO()
 mainAlarm = do
     time <- getCurrentTimeString
@@ -20,19 +21,16 @@ mainAlarm = do
         "0 - Sair\n",
         "-----------------------------------------\n",
         "Escolha sua ação:"]
-    acao <- readLn
-    case acao of
-        0 -> putStrLn "saindo..."
-        1 -> addAlarm
-        2 -> listAlarms
-        3 -> deleteAlarm
-        4 -> updateAlarm 
-        5 -> activeAlarm
-        _ -> do
-             putStrLn "Opção inválida!"
-        
-        
-    mainAlarm
+    choice <- getLine
+    if choice == "0" then return()
+    else do
+        case choice of
+            "1" -> addAlarm
+            "2" -> listAlarms
+            "3" -> deleteAlarm
+            _ -> do
+                putStrLn "Opção inválida!"
+        mainAlarm
 
 addAlarm :: IO ()
 addAlarm = do
@@ -83,7 +81,6 @@ listAlarms = do
     choice <- getLine
     case choice of
         "0" -> do
-            putStrLn "saindo..."
             mainAlarm
         "1" -> deleteAlarm
         "2" -> updateAlarm 

@@ -20,14 +20,14 @@ menuLoop = do
     putStrLn "0 - Voltar ao Menu"
     printeBottom
     choice <- getLine
-    case choice of
-        "1" -> listContact 
-        "2" -> addContact >> menuLoop
-        "3" -> speedDial >> menuLoop
-        "0" -> putStrLn "TODOOOO"
-        _   -> do
-            putStrLn "Opção inválida! Tente novamente."
-            menuLoop
+    if choice == "0" then return()
+    else do
+      case choice of
+          "1" -> listContact 
+          "2" -> addContact >> menuLoop
+          "3" -> speedDial >> menuLoop
+          _   -> putStrLn "Opção inválida! Tente novamente."
+      menuLoop
  
 subMenu :: IO()
 subMenu = do

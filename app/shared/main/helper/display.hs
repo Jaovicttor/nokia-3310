@@ -1,5 +1,6 @@
-printeHeader :: IO()
-printeHeader = do
+module App.Shared.Main.Helper.Timer where
+printeHeader :: String -> IO()
+printeHeader name = do
   putStrLn "\n----------------------------"
   putStrLn "---------NOKIA-3310---------"
   putStrLn "----------------------------"

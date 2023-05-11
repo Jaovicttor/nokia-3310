@@ -10,15 +10,13 @@ mainMessage = do
  putStrLn "2 - Apagar conversa"
  putStrLn "0 - Sair"
  choice <- getLine
- if choice == "0" then putStrLn "saindo..."
- else do
-    case choice of
-        "x" -> startConversation
-        "1" -> formConversation 
-        "2" -> formDeleteConversation 
-        _   -> do
-            putStrLn "Opção inválida! Tente novamente."
-    mainMessage
+ case choice of
+    "0" -> return ()
+    "x" -> startConversation >> mainMessage
+    "1" -> formConversation >> mainMessage
+    "2" -> formDeleteConversation >> mainMessage
+    _  -> putStrLn "Opção inválida! Tente novamente." >> mainMessage
+ 
     
 startConversation :: IO()
 startConversation = do
@@ -89,7 +87,7 @@ showConversation name conversation = do
     putStrLn "-------------------------------------------"
     case choice of
         "x" -> sendMessage (Message.chip_id conversation) >> showConversation name conversation
-        "0" -> putStrLn "saindo..."
+        "0" -> return ()
         _   -> do
             putStrLn "Opção inválida! Tente novamente." >> showConversation name conversation
     
