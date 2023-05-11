@@ -2,23 +2,23 @@
 module Main where
 import Database.PostgreSQL.Simple
 import DB.Connection
-import DB.Models.Chip
+import DB.Models.Chip 
 import DB.Models.Contact
-import DB.Models.Call
-import DB.Models.Event
+import DB.Models.Call 
+import DB.Models.Event 
 import DB.Models.Message
-import DB.Models.Alarm
+import DB.Models.Alarm  
 import App.Modules.Alarm.Index
 import App.Modules.Alarm.MainAlarm
 import Control.Concurrent 
 main :: IO() 
 main = do
     _ <- forkIO alarm        
-    mainAlarm 
+    mainAlarm  
    -- putStrLn "Criando base de dados..."
-   --startDatabase 
+   --startDatabase  
 --putStrLn "Base de dados criada"
- 
+  
 --  insertChip "Joao Victor" "79988686084" False
 --  insertChip "Rodrigo Correia" "83954478512" False
 --  insertContact "Rodrigo Monstrinho" "83954478512" "2023-01-01" (-1) 1

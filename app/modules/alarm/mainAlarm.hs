@@ -7,6 +7,7 @@ import DB.Models.Chip
 import Data.Time
 import Control.Concurrent
 import Control.Monad
+import System.Console.ANSI
 
 alarm :: IO ()
 alarm = forever $ do 
@@ -21,4 +22,12 @@ verificationAlarm = do
               Just time -> do
                 verificationAlarms time
               Nothing -> return []
-        mapM_(\(Alarm id time title active chip_id) -> putStrLn $ "\n" ++ "Alarme disparado: " ++ show time ++ "\t" ++ title) alarmes
+        if (length alarmes) /= 0
+                then do
+                    setSGR [SetColor Foreground Vivid Red]
+                    mapM_(\(Alarm id time title active chip_id) -> putStrLn $ "Alarme disparado: " ++ show time ++ "\t" ++ title) alarmes
+                    setSGR [SetColor Foreground Vivid White]
+        else
+              return ()  
+         
+         
