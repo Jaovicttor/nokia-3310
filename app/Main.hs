@@ -1,8 +1,9 @@
 {-# LANGUAGE OverloadedStrings #-} 
 module Main where
 import Database.PostgreSQL.Simple
-import qualified App.Modules.Message.Index as Message
+import qualified App.Modules.Contacts.Index as Contact
 
 main :: IO()
 main = do 
- Message.mainMessage           
+ Contact.main 
+      

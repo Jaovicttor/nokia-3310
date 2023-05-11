@@ -49,13 +49,14 @@ getContactById id = do
   conn <- connectionMyDB
   query conn "select id, name, phone, speed_dial from contacts where id = ? and chip_id = ?" (Only (idChip myChip))
 
-
-getSpeedDial :: IO [String]
+getSpeedDial :: IO [(String, Int)]
 getSpeedDial = do
-  let q = "select name from contacts where speed_dial < 10 and speed_dial > 0"
+  let q = "select name, speed_dial from contacts where speed_dial < 10 and speed_dial > 0"
   conn <- connectionMyDB
-  result <- query_ conn q :: IO [Only String]
-  return $ map fromOnly result
+  result <- query_ conn q :: IO [(Maybe String, Maybe Int)]
+  return $ map (\(n, sd) -> (fromMaybe "" n, fromMaybe 0 sd)) result
+
+
 
 contactToString :: [Contact] -> Int -> String
 contactToString [] _ = [] 
@@ -68,10 +69,17 @@ deleteContact contact_id = do
   execute conn q [contact_id, (idChip myChip)]
   return ()
 
-
 updateContact :: Int -> String -> String -> String -> Int -> IO ()
 updateContact contactId name phone birthday speedDial = do
   let q = "UPDATE contacts SET name = ?, phone = ?, birthday = ?, speed_dial = ? WHERE id = ?"
   conn <- connectionMyDB
   execute conn q (name, phone, birthday, speedDial, contactId)
   return ()
+
+streams :: [Contact] -> [String]
+streams [] = []
+streams (x:xs) = phone x : streams xs
+
+
+fromTuple :: (a, b) -> (Maybe a, Maybe b)
+fromTuple (x, y) = (Just x, Just y)
