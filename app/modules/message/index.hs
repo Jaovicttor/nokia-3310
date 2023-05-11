@@ -43,7 +43,7 @@ startConversation = do
                 let sented_by = (idChip myChip) 
                 if(received_by == sented_by ) then putStrLn "Não é possivel enviar uma mensagem para o próprio número"
                 else do
-                    Message.insertMessage message "2023-05-02 14:28:12" received_by
+                    Message.insertMessage message received_by
                     putStrLn "Mensagem enviada com sucesso"
 
 showConversations :: IO()
@@ -103,7 +103,7 @@ sendMessage received_by = do
         putStrLn "-------------------------------------------"
         if(message == "") then putStrLn "A mensagem não pode ser vazia."
         else
-            Message.insertMessage message "2023-05-02 14:28:12" received_by
+            Message.insertMessage message received_by
 
 formDeleteConversation :: IO()
 formDeleteConversation = do 

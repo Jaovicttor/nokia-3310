@@ -44,10 +44,15 @@ addAlarm = do
             if var == True
                 then do 
                     putStrLn "Digite o título do alarme:"
-                    title <- getLine 
-                    insertAlarm t title (idChip myChip)
-                    putStrLn "Alarme adicionado com sucesso!"
-                    mainAlarm
+                    title <- getLine
+                    if title == "-" 
+                        then do 
+                            mainAlarm
+                            putStrLn ""
+                    else do  
+                        insertAlarm t title (idChip myChip)
+                        putStrLn "Alarme adicionado com sucesso!"
+                        mainAlarm
             else do
                 putStrLn "Alarme já existe"
                 addAlarm
@@ -148,6 +153,7 @@ updateAlarm = do
     case parseTimeM True defaultTimeLocale "%H:%M" time :: Maybe TimeOfDay of
         Just t -> do
             var <- checkAlarm t
+            titleAtual <- getTitleAlarms t
             if var == False then do
                 putStrLn $ concat [
                     "Atual:",
@@ -159,11 +165,17 @@ updateAlarm = do
                     Just nt -> do
                         var <- checkAlarm nt
                         if var == True then do 
+                            putStrLn $ "Atual: " ++ titleAtual
                             putStrLn "Digite o novo título do alarme:"
                             title <- getLine
-                            updateAlarms t nt title
-                            putStrLn "Alarme alterado com sucesso!"
-                            listAlarms
+                            if title == "-" 
+                                then do 
+                                    listAlarms
+                                    putStrLn ""
+                            else do  
+                                updateAlarms t nt title
+                                putStrLn "Alarme alterado com sucesso!"
+                                listAlarms
                         else do
                             putStrLn "Alarme já existe, tente outro horário"
                             updateAlarm

@@ -16,4 +16,3 @@ isCurrentTime :: String -> IO Bool
 isCurrentTime timeString = do
     current <- getCurrentTimeString
     return (current == timeString)
-
