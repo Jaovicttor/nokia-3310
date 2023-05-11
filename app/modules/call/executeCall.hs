@@ -55,8 +55,8 @@ execute my_chip receiver_number = do
                     putStrLn "[!] Ligacao encerrada"
                 else print "[!] Ligacao recusada"
                 insertCall startTime endTime answered (idChip my_chip) (idChip c) False False
-            else print "[!] Numero não pode receber chamadas nesse momento"
-        Nothing -> print "[!] Chip nao encontrado para numero informado"
+            else putStrLn "[!] Numero não pode receber chamadas nesse momento"
+        Nothing -> putStrLn "[!] Chip não encontrado para numero informado"
 
 doCall::String -> IO()
 doCall "" = print "[!] Numero Invalido"

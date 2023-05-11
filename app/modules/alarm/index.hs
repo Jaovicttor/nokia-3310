@@ -18,9 +18,9 @@ mainAlarm = do
     choice <- getLine
     case choice of
         "0" -> return ()
-        "1" -> addAlarm >>mainAlarm
+        "1" -> addAlarm >> mainAlarm
         "2" -> listAlarms >>mainAlarm
-        "3" -> deleteAlarm >>mainAlarm
+        "3" -> deleteAlarm 
         "-"-> return ()
         _ -> do
             putStrLn "Opção inválida!"
@@ -40,23 +40,18 @@ addAlarm = do
                     putStrLn "Digite o título do alarme:"
                     title <- getLine
                     if title == "-" 
-                        then do 
-                            mainAlarm
-                            putStrLn ""
+                        then return ()
                     else do  
                         insertAlarm t title (idChip myChip)
                         putStrLn "Alarme adicionado com sucesso!"
                         Display.printeBottom
-                        mainAlarm
             else do
                 putStrLn "Alarme já existe"
                 Display.printeBottom
                 addAlarm
         Nothing -> do
             if time == "-"
-                then do
-                    putStrLn ""
-                    mainAlarm
+                then return ()
             else 
                 do
                 putStrLn "Formato de hora inválido. Por favor, use o formato hh:mm."
@@ -68,7 +63,7 @@ listAlarms:: IO ()
 listAlarms = do
     Display.printeHeader "Alarmes--"
     resultados <- getAlarms 
-    putStrLn "\nAlarmes:"
+    putStrLn "Alarmes:"
     putStrLn "Hora\tAtivo\tTitulo"
     mapM_ (\(Alarm id time title active chip_id) -> putStrLn $ formatTime defaultTimeLocale "%H:%M" time ++ "\t" ++ bool "" "X" active ++"\t"++title ++ "\t") resultados
     putStrLn "\n1 - Excluir alarme"
@@ -78,14 +73,11 @@ listAlarms = do
     Display.printeBottom
     choice <- getLine
     case choice of
-        "0" -> do
-            mainAlarm
+        "0" -> return ()
         "1" -> deleteAlarm
         "2" -> updateAlarm 
         "3" -> activeAlarm
-        "-" -> do
-            putStrLn " "
-            mainAlarm
+        "-" -> return ()
         _ -> do
             putStrLn "Opção inválida!"
             listAlarms 

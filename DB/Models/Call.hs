@@ -27,13 +27,13 @@ createCalls = do
     conn <- connectionMyDB
     execute_  conn "CREATE TABLE IF NOT EXISTS calls (\
                     \id SERIAL PRIMARY KEY,\
-                    \started_at timestamp NOT NULL,\
-                    \finish_at timestamp NOT NULL,\
+                    \started_at timestamptz NOT NULL,\
+                    \finish_at timestamptz NOT NULL,\
                     \answered boolean NOT NULL,\
                     \sented_by int,\
                     \received_by int,\
                     \has_sender_deleted boolean,\
-                    \has_receiber_deleted boolean,\
+                    \has_receiver_deleted boolean,\
                     \FOREIGN KEY(sented_by) REFERENCES chips(id),\
                     \FOREIGN KEY(received_by) REFERENCES chips(id));"
     return ()

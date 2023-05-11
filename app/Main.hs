@@ -6,16 +6,16 @@ import qualified App.Modules.Calendar.Index as Calendar
 import qualified App.Modules.Contacts.Index as Contacts
 import qualified App.Modules.Message.Index as Message
 import qualified App.Modules.Call.Index as Call
-import qualified DB.Init as Init
+import qualified DB.Init as Init  
 import qualified App.Shared.Main.Helper.Display as Display
 import Control.Concurrent   
 
 main :: IO()
-main = do
+main = do  
     Init.init
     menu
     
-menu :: IO ()
+menu :: IO () 
 menu = do   
     _ <- forkIO Cron.alarm  
     Display.printeHeader "--------"
@@ -23,8 +23,8 @@ menu = do
     putStrLn "2 - Ligações" 
     putStrLn "3 - Mensagens" 
     putStrLn "4 - Calendário" 
-    putStrLn "5 - Alarmes"
-    putStrLn "0 - Sair" 
+    putStrLn "5 - Alarmes" 
+    putStrLn "0 - Desligar"  
     Display.printeBottom 
     choice <- getLine 
       

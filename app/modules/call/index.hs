@@ -53,11 +53,11 @@ proxyOptions 2 = do
     calls <- listCalls
     printCalls calls
     putStrLn "[x] - apagar chamada"
-    putStrLn "[m] - menu"
+    putStrLn "[0] - menu"
     option <- getLine
     case option of
         "x" -> proxyDeleteCall calls
-        "m" -> menu
+        "0" -> menu
         _ -> do
             print "[!] Operacao Invalida"
             menu

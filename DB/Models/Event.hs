@@ -21,11 +21,11 @@ data Event = Event {
 
 createEvents :: IO()
 createEvents = do
-    conn <- connectCloud
+    conn <- connectionMyDB
     execute_ conn "CREATE TABLE IF NOT EXISTS events (\
                     \id SERIAL PRIMARY KEY,\
                     \title VARCHAR(255) NOT NULL,\
-                    \event_day date NOT NULL,\
+                    \event_day timestamptz NOT NULL,\
                     \comments VARCHAR(255),\
                     \chip_id int,\
                     \FOREIGN KEY(chip_id) REFERENCES chips(id));"
@@ -35,25 +35,25 @@ createEvents = do
 insertEvent :: String -> String -> String -> IO ()
 insertEvent title event_day comments = do
  let q = "insert into events (title, comments, event_day, chip_id ) values (?,?,?,?)"
- conn <- connectCloud
+ conn <- connectionMyDB
  execute conn q (title, comments, event_day,(idChip myChip))
  return ()
 
 getNextEvent:: IO [Event]
 getNextEvent= do
-    conn <- connectCloud
+    conn <- connectionMyDB
     query conn "select  id,title,comments,event_day, chip_id from events \
                 \where event_day >= current_timestamp and chip_id =?" (Only (idChip myChip))
 
 getPreviusEvent:: IO [Event]
 getPreviusEvent= do
-    conn <- connectCloud
+    conn <- connectionMyDB
     query conn "select id,title,comments,event_day, chip_id from events \
                 \where event_day <= current_timestamp and chip_id =?" (Only (idChip myChip))
 
 getEvents :: IO [Event]
 getEvents = do
-    conn <- connectCloud
+    conn <- connectionMyDB
     query conn "select id,title,comments,event_day,chip_id from events \
                 \where chip_id =?" (Only (idChip myChip))
 
@@ -61,14 +61,14 @@ findEvent :: String -> IO [Event]
 findEvent title = do
  let q = "select id,title,comments,event_day,chip_id from events \
                 \where id=? and chip_id =?" 
- conn <- connectCloud
+ conn <- connectionMyDB
  query conn q (title,(idChip myChip)) :: IO [Event]
 
 
 deleteEventDB :: Int -> IO ()
 deleteEventDB x = do
   let q = "delete from events where id = ?"
-  conn <- connectCloud
+  conn <- connectionMyDB
   execute conn q (Only x)
   return ()
   

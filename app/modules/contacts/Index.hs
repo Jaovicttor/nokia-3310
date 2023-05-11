@@ -24,10 +24,10 @@ menuLoop = do
     else do
       case choice of
           "1" -> listContact 
-          "2" -> addContact >> menuLoop
-          "3" -> speedDial >> menuLoop
-          _   -> putStrLn "Opção inválida! Tente novamente."
-      menuLoop
+          "2" -> addContact 
+          "3" -> speedDial
+          _   -> putStrLn "Opção inválida! Tente novamente." >> menuLoop
+      
  
 subMenu :: IO()
 subMenu = do
@@ -39,10 +39,11 @@ subMenu = do
   printeBottom
   choice <- getLine
   case choice of
-        "1" -> editContact >> listContact
-        "2" -> formDeleteContact >> listContact
-        "3" -> addContact >> listContact
+        "1" -> editContact
+        "2" -> formDeleteContact
+        "3" -> addContact
         "0" -> main
+        
         _   -> do
             putStrLn "Opção inválida! Tente novamente."
             subMenu
@@ -73,7 +74,6 @@ deleteContact n = do
   contacts <- Contact.getContacts
   if(n <= 0 || n > length contacts ) then do
         putStrLn "Contato não encontrado"
-        subMenu
   else do
     let contact = (contacts !! (n-1))
     Contact.deleteContact (Contact.idContact contact)
@@ -86,6 +86,7 @@ speedDial = do
   let sortedContacts = sortOn snd contacts -- ordena a lista pelo segundo elemento (speed_dial)
   putStrLn "\n---Contatos de Emergencia---\n"
   mapM_ (\(name, speed_dial) -> putStrLn (show speed_dial ++ " " ++ name)) sortedContacts
+  menuLoop
 
 
 addContact :: IO ()
@@ -130,6 +131,7 @@ editContact = do
   putStrLn "\n"
   editAdd
   deleteContact (read n)
+  listContact
 
 
 removeHyphen :: String -> String

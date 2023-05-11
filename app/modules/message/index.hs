@@ -15,8 +15,8 @@ mainMessage = do
  case choice of
     "0" -> return ()
     "x" -> startConversation >> mainMessage
-    "1" -> formConversation >> mainMessage
-    "2" -> formDeleteConversation >> mainMessage
+    "1" -> formConversation 
+    "2" -> formDeleteConversation
     _  -> putStrLn "Opção inválida! Tente novamente." >> mainMessage
  
     
@@ -25,11 +25,11 @@ startConversation = do
  Display.printeHeader "mensagens"
  putStrLn "Número:"
  number <- getLine
- if(number == "-") then putStrLn""
+ if(number == "-") then return()
  else do
     putStrLn "Mensagem:"
     message <- getLine
-    if(message == "-") then putStrLn""
+    if(message == "-") then return()
     else do
         putStrLn "----------------------------"
         if(message == "") then putStrLn "A mensagem não pode ser vazia."
@@ -104,7 +104,7 @@ sendMessage received_by = do
     putStrLn "Mensagem:"
     Display.printeBottom
     message <- getLine
-    if(message == "-") then putStrLn""
+    if(message == "-") then return()
     else do
         putStrLn "----------------------------"
         if(message == "") then putStrLn "A mensagem não pode ser vazia."
@@ -129,6 +129,7 @@ deleteConversation number = do
     if(number <= 0 || number > length conversations ) then do
         putStrLn "Conversa não encontrada"
         putStrLn "----------------------------"
+        mainMessage
     else do
         let conversation = (conversations !! (number-1))
         Message.deleteConversation (Message.chip_id conversation)
