@@ -27,7 +27,7 @@ main = do
     else do
         case choice of
             "1" -> Contacts.main  
-            "2" -> print "To Do" 
+            "2" -> menu 
             "3" -> Message.mainMessage
             "4" -> Calendar.menuCalendar
             "5" -> Alarm.mainAlarm
