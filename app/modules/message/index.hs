@@ -1,6 +1,7 @@
 module App.Modules.Message.Index  where
 import qualified DB.Models.Message as Message
 import DB.Models.Chip
+import qualified App.Shared.Main.Helper.Display as Display
 
 mainMessage :: IO()
 mainMessage = do
@@ -9,6 +10,7 @@ mainMessage = do
  putStrLn "1 - Ler conversa"
  putStrLn "2 - Apagar conversa"
  putStrLn "0 - Sair"
+ Display.printeBottom
  choice <- getLine
  case choice of
     "0" -> return ()
@@ -20,7 +22,7 @@ mainMessage = do
     
 startConversation :: IO()
 startConversation = do
- putStrLn "-------------------------------------------"
+ Display.printeHeader "mensagens"
  putStrLn "Número:"
  number <- getLine
  if(number == "-") then putStrLn""
@@ -29,7 +31,7 @@ startConversation = do
     message <- getLine
     if(message == "-") then putStrLn""
     else do
-        putStrLn "-------------------------------------------"
+        putStrLn "----------------------------"
         if(message == "") then putStrLn "A mensagem não pode ser vazia."
         else do
             chip <- getChipByNumber number
@@ -43,23 +45,26 @@ startConversation = do
                 else do
                     Message.insertMessage message received_by
                     putStrLn "Mensagem enviada com sucesso"
-
+    Display.printeBottom
 showConversations :: IO()
 showConversations = do
-    putStrLn "-------------------------------------------"
-    putStrLn "------------------Mensagens----------------"
-    putStrLn "-------------------------------------------"
+    Display.printeHeader "mensagens"
     conversations <- Message.getConversations
     let conversations_string = Message.conversationsToString conversations 0
     putStrLn conversations_string
-    putStrLn "-------------------------------------------"
+    putStrLn "----------------------------"
 
 formConversation :: IO()
 formConversation = do 
-    putStrLn "-------------------------------------------"
+    Display.printeHeader "mensagens"
+    conversations <- Message.getConversations
+    let conversations_string = Message.conversationsToString conversations 0
+    putStrLn conversations_string
+    putStrLn "----------------------------"
     putStrLn "Informe o nº da conversa:"
+    Display.printeBottom
     conversation_number <- getLine
-    putStrLn "-------------------------------------------"
+    putStrLn "----------------------------"
     findConversation (read conversation_number)
 
 
@@ -68,7 +73,7 @@ findConversation number = do
     conversations <- Message.getConversations
     if(number <= 0 || number > length conversations ) then do
         putStrLn "Conversa não encontrada"
-        putStrLn "-------------------------------------------"
+        putStrLn "----------------------------"
     else do
         let conversation = (conversations !! (number-1))
         showConversation (Message.toStringConversation conversation ) conversation
@@ -76,15 +81,16 @@ findConversation number = do
 
 showConversation :: String -> Message.Conversation -> IO()
 showConversation name conversation = do
-    putStrLn "-------------------------------------------"
+    Display.printeHeader "mensagens"
     messages <- Message.findConversation (Message.chip_id conversation)
     let messages_string = Message.messageToString name messages
     putStrLn(messages_string)
-    putStrLn "-------------------------------------------"
+    putStrLn "----------------------------"
     putStrLn "x - Enviar mensagem"
     putStrLn "0 - Sair"
+    Display.printeBottom
     choice <- getLine
-    putStrLn "-------------------------------------------"
+    putStrLn "----------------------------"
     case choice of
         "x" -> sendMessage (Message.chip_id conversation) >> showConversation name conversation
         "0" -> return ()
@@ -94,21 +100,27 @@ showConversation name conversation = do
 
 sendMessage:: Int -> IO()
 sendMessage received_by = do
+    Display.printeHeader "mensagens"
     putStrLn "Mensagem:"
+    Display.printeBottom
     message <- getLine
     if(message == "-") then putStrLn""
     else do
-        putStrLn "-------------------------------------------"
+        putStrLn "----------------------------"
         if(message == "") then putStrLn "A mensagem não pode ser vazia."
         else
             Message.insertMessage message received_by
 
 formDeleteConversation :: IO()
 formDeleteConversation = do 
-    putStrLn "-------------------------------------------"
+    Display.printeHeader "mensagens"
+    conversations <- Message.getConversations
+    let conversations_string = Message.conversationsToString conversations 0
+    putStrLn conversations_string
     putStrLn "Informe o nº da conversa:"
+    Display.printeBottom
     conversation_number <- getLine
-    putStrLn "-------------------------------------------"
+    putStrLn "----------------------------"
     deleteConversation (read conversation_number)
 
 deleteConversation :: Int -> IO()
@@ -116,10 +128,10 @@ deleteConversation number = do
     conversations <- Message.getConversations
     if(number <= 0 || number > length conversations ) then do
         putStrLn "Conversa não encontrada"
-        putStrLn "-------------------------------------------"
+        putStrLn "----------------------------"
     else do
         let conversation = (conversations !! (number-1))
         Message.deleteConversation (Message.chip_id conversation)
         putStrLn "Conversa deletada."
-        putStrLn "-------------------------------------------"
+        putStrLn "----------------------------"
         mainMessage

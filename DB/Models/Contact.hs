@@ -16,7 +16,6 @@ data Contact = Contact {
     
 } deriving (Generic, FromRow,Show, Read, Eq)
 
-
 createContacts :: IO()
 createContacts = do
     conn <- connectionMyDB
@@ -39,6 +38,15 @@ insertContact name phone birthday speed_dial chip_id = do
  execute conn q (name, phone, birthday, speed_dial, chip_id)
  return ()
 
+findByPhone::Int -> String -> IO (Maybe String)
+findByPhone chip_id phone = do
+    let q = "select name from contacts where chip_id = ? and phone = ?"
+    conn <- connectionMyDB 
+    result <- query conn q (chip_id, phone)
+    case result of
+        [Contact {name = name}] -> return (Just name)
+        _                       -> return Nothing
+
 getContacts :: IO [Contact]
 getContacts = do
   conn <- connectionMyDB
@@ -55,8 +63,6 @@ getSpeedDial = do
   conn <- connectionMyDB
   result <- query_ conn q :: IO [(Maybe String, Maybe Int)]
   return $ map (\(n, sd) -> (fromMaybe "" n, fromMaybe 0 sd)) result
-
-
 
 contactToString :: [Contact] -> Int -> String
 contactToString [] _ = [] 
@@ -79,7 +85,6 @@ updateContact contactId name phone birthday speedDial = do
 streams :: [Contact] -> [String]
 streams [] = []
 streams (x:xs) = phone x : streams xs
-
 
 fromTuple :: (a, b) -> (Maybe a, Maybe b)
 fromTuple (x, y) = (Just x, Just y)

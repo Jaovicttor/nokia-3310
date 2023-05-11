@@ -1,10 +1,11 @@
 module App.Shared.Main.Helper.Display where
+    
 printeHeader :: String -> IO()
 printeHeader name = do
   putStrLn "\n----------------------------"
   putStrLn "---------NOKIA-3310---------"
   putStrLn "----------------------------"
-  putStrLn "-----------agenda-----------"
+  putStrLn ("---------"++name++"----------")
   putStrLn "----------------------------"
   putStrLn "     Selecione uma opção    "
   putStrLn "----------------------------\n"

@@ -33,6 +33,14 @@ insertChip owner number isOn = do
  execute conn q (owner, number, isOn)
  return ()
 
+findByNumber:: String -> IO(Maybe Chip)
+findByNumber number = do
+    let q = "select * from chips where number = ?"
+    conn <- connectionMyDB
+    result <- query conn q (Only number):: IO[Chip]
+    if length result == 0 then return Nothing
+    else return (Just (head result))
+    
 getChips:: IO [Chip]
 getChips = do
     conn <- connectionMyDB
