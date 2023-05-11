@@ -10,11 +10,13 @@ import qualified DB.Init as Init
 import qualified App.Shared.Main.Helper.Display as Display
 import Control.Concurrent   
 
- 
-main :: IO ()
-main = do   
-    
+main :: IO()
+main = do
     Init.init
+    menu
+    
+menu :: IO ()
+menu = do   
     _ <- forkIO Cron.alarm  
     Display.printeHeader "--------"
     putStrLn "1 - Contatos"   
@@ -35,4 +37,4 @@ main = do
             "4" -> Calendar.menuCalendar
             "5" -> Alarm.mainAlarm
             _   -> putStrLn "Opção inválida! Tente novamente."
-        main   
+        menu   
