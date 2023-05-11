@@ -45,18 +45,10 @@ insertMessage message received_by = do
 
 getConversations:: IO [Conversation]
 getConversations = do
-    let q = "select c.id, c2.name, c.number from messages m \ 
-                \join chips c \
-                \on (c.id = m.sented_by or c.id  = m.received_by) \
-                \left join contacts c2 \
-                \on c2.phone = c.number \
-                \where ((m.received_by = ? and  available_received_by = true)  or\
-                \    (m.sented_by = ? and available_sented_by = true) ) and \
-                \    (c2.chip_id = ? or c2.chip_id is null)\
-                \    and c.id != ?\
-                \group by name,number,c.id" 
+    let q = "select c.id, c2.name, c.number from messages m join chips c on (c.id = m.sented_by or c.id  = m.received_by) left join contacts c2 on c2.phone = c.number where ((m.received_by = ? and  available_received_by = true)  or (m.sented_by = ? and available_sented_by = true) ) and (c2.chip_id = ? or c2.chip_id is null) and c.id != ? group by name,number,c.id" 
     conn <- connectionMyDB
-    query conn q ((idChip myChip), (idChip myChip), (idChip myChip), (idChip myChip)) :: IO [Conversation]
+    let chip_id = ((idChip myChip) :: Int)
+    query conn q (chip_id, chip_id, chip_id, chip_id) :: IO [Conversation]
 
 
 conversationsToString:: [Conversation] -> Int -> String
