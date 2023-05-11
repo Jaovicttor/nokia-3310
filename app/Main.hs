@@ -5,6 +5,8 @@ import qualified App.Modules.Alarm.Index as Alarm
 import qualified App.Modules.Calendar.Index as Calendar
 import qualified App.Modules.Contacts.Index as Contacts
 import qualified App.Modules.Message.Index as Message
+import App.Modules.Call.Index (menu)
+import Control.Concurrent 
 import qualified App.Shared.Main.Helper.Display as Display
  
 import Control.Concurrent   
@@ -25,7 +27,7 @@ main = do
     else do
         case choice of
             "1" -> Contacts.main  
-            "2" -> print "To Do" 
+            "2" -> menu 
             "3" -> Message.mainMessage
             "4" -> Calendar.menuCalendar
             "5" -> Alarm.mainAlarm
