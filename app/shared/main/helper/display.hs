@@ -1,4 +1,4 @@
-module App.Shared.Main.Helper.Timer where
+module App.Shared.Main.Helper.Display where
 printeHeader :: String -> IO()
 printeHeader name = do
   putStrLn "\n----------------------------"
