@@ -7,7 +7,7 @@ import Data.Time.Format (defaultTimeLocale, formatTime)
 import Data.Char
 import Data.List (sortBy)
 import Data.Ord (comparing)
-
+import App.Shared.Main.Helper.Display 
 addEvento :: Int ->IO ()
 addEvento 0 = do
   putStrLn "Titulo: "
@@ -132,6 +132,24 @@ deleteEvent 1 number = do
 -- menu
 menuLoop :: IO ()
 menuLoop = do
+    time <- currentTime
+    putStrLn $ "\n--------------------------------\n" ++
+                 "------------NOKIA-3310----------\n" ++
+                 "--------------------------------\n" ++
+                 "-----------Calendário-----------\n" ++
+                 "--------------------------------\n" ++
+                 "    " ++ time ++ "\n"++
+                 "--------------------------------\n" ++
+                 "        Selecione uma opção    \n" ++
+                 "--------------------------------\n\n" ++
+                 "   1 - Adicionar Evento        \n" ++
+                 "   2 - Listar todos os Eventos \n" ++
+                 "   3 - Listar próximos Eventos \n" ++
+                 "   4 - Listar Eventos passados \n" ++
+                 "   5 - Editar Evento           \n" ++
+                 "   6 - Excluir Evento          \n" ++
+                 "   0 - Voltar             "     
+    printeBottom
     putStrLn "Digite: "
     choice <- getLine
     case choice of
@@ -148,17 +166,11 @@ menuLoop = do
 
 menuCalendar :: IO ()
 menuCalendar = do
-    strTime <- currentTime
-    putStrLn $ nokia strTime
-    -- header "Calendário"
-    -- currentTime
     menuLoop
 
 -- helper interface
 header :: String -> IO()
 header str = putStrLn  $ 
-            replicate (21 + length str) block ++ "\n" ++
-            replicate 10 block ++ "nokia-3310" ++ replicate (length str + 1) block ++ "\n" ++
             replicate (21 + length str) block ++ "\n" ++
             replicate 10 block ++ str ++ replicate 11 block ++ "\n" ++
             replicate (21 + length str) block
@@ -245,49 +257,8 @@ waitForKey = do
   putStrLn "Continuando..."
 
 padrao :: String
-padrao = replicate 110 '-'
+padrao = replicate  32 '-'
 
 validBack :: String -> IO ()
 validBack "-" = menuCalendar
 validBack _ = putStrLn ""
-
-nokia :: String -> String
-nokia hora =
-  replicate 110 '-' ++  "\n " ++  
-  "    -╤▓▓▓▓▓▓▓▓██████████████▓▓╦       " ++     "\n" ++                
-  "  .╠╬╣█▓▓▓█████████████████████╣▒     " ++     "\n" ++                  
-  "  ╩╬╩█▓▓█▓█████████████████████╣╣▒    " ++     "\n" ++       
-  "  ║╬╣█▓█████████████████████████╣╬    " ++     "\n" ++                
-  " ]╣╣█▓██████████████████████████╣╬⌐   " ++     "\n" ++                
-  " ║╬╣█▓███████████████████████████▓▌   " ++     replicate 10 ' ' ++  hora ++ replicate 10 ' ' ++ "\n" ++       
-  " ║╬▓█████████████████████████████║╬   " ++     "\n" ++                                                    
-  " ║╬██████████▌╬Γ╝╫Γ▀▌▀╚██████████▌╬   " ++      "        ██████████████Opções█████████████\n"     ++                              
-  " ║▌█▓█████▓███████████████████████▌⌐  " ++      "         | 1 - Adicionar Evento        |\n" ++
-  " ║╣███▓▓▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▓███Å▒  " ++      "         | 2 - Listar todos os Eventos |\n" ++
-  " ║╬███░---░░░░░░░░░░░░░░░░░░-░╣███▓▒  " ++      "         | 3 - Listar próximos Eventos |\n" ++
-  " ║╣███▒░,░░░░░░░░░░░░░≥░░░░░░░╠████▌  " ++      "         | 4 - Listar Eventos passados |\n" ++
-  " ║╣██▓▒░»░░░░░░░░░░░░░░░░░░░░░│████▌  " ++      "         | 5 - Editar Evento           |\n" ++
-  " ║╬███▒░░░░░░░░░░░░░░░░░≥░░░░░│███▓▌  " ++      "         | 6 - Excluir Evento          |\n" ++
-  " ║▌▓██▒░░░░░░░░░░░░░░░░░░░░░∩░║███▓▌  " ++      "         | 0 - Voltar                  |\n" ++
-  " ║╣███▌░░░░░░░░░░░░░░░░░░░░░⌐\"╟███▌  " ++      "         █████████████████████████████████\n"     ++             
-  " ╠╬▓██▌░--░░░░░░░░░░░░░░░░░░~:╟██▌▓▌  " ++     "\n" ++               
-  " ╠╬╣███▄▄▄▄▄▄▄▄▄▄▄░▄▄▄▄▄▄▄▄▄▄▄███╬▓▌  " ++     "\n" ++               
-  " ╠╬╬╬▓█▓████████████████████████▒╣╬▌  " ++     "\n" ++               
-  " ╠╬╬╬╬▓█▌╣╬╣████▓▓▓█████╣▓██▓▓█▒╣╣▓▒  " ++     "\n" ++               
-  " ╠╬╬╣╬╣███▄╠╚╚▀╠╠║╦╣╬╬▒╚╩╠╣▓██╣╣╣╣╬▒  " ++     "\n" ++               
-  " ║╬╬╬╬╝╬╬▓▀███▓▓█▓▓▓█▓▓███▀▓▄█╠╣╣╣╬▒  " ++     "\n" ++               
-  " ║╬╬╬╬╪╣╬╠▀█████▀▓▓██▀███▓╬╣╣▀║╣╣╣╬░  " ++     "\n" ++                                                        
-  " ]╬╬╬╬╬╣╬╠╠╚╠╬╣╬╠╬╠║╩╬╬▒╬╠╠╠╣╣╬╣╬╣╬   " ++     "\n" ++                                    
-  "  ╠╬╬╣╣╣▓▄╩╣╬╬╬╬╬╣▒╣╣╬╬╬╣╝╬╣▓██▌╬╣╬   " ++     "\n" ++                                    
-  "  ╠╬╬╬╩╩╚╩▀█▓▒╬▒╣▀▓▓███▓╬╬╩╩╠╠╬╣╬╬╬   " ++     "\n" ++                                    
-  "  ╠╬╬╬╬▒╦╦╬╣╣╣╣╬╠╦╦╧╠╠╬╣╬╬▒▒▒╣╣╣╬╬▒   " ++     "\n" ++                                    
-  "  ╠╬╬Φ╩║▓██▄╬╠╠╠╠╠╬╬╠╠╠╠╠╫╣▓▓▌█▌╣╣▒   " ++     "\n" ++                                    
-  "  ║╠╬╣╬╩ü╠╚╩╬╠╝╠╠╚╩╚║▀▀╬╬╠≥≡≡╠╬╣╣╬░   " ++     "\n" ++                                    
-  "  ]╠╠╬╩╠╠╠╩╬╬╬╬╣╬╦╣╬╬╬╬╬╬╣╬╠▄▄▄╣╣╬    " ++     "\n" ++                                    
-  "   ╠╬╠╚▒╝╝▀██╣╣╣╣╣▓███▓╬╬▀╬▀▀▒╩╣╬╬    " ++     "\n" ++                                    
-  "   ╠╠╬╬╦▒▒╠║╬╣╬╬╠╦░╩╠╠╬╬▒╦╗╣╦╣╬╬╬▒    " ++     "\n" ++                                    
-  "   ╚╠╬╬╟╝╣╣▄╠╣╬╬╩╝╬╬╩╣╬╬╬╫▓█▀█║╣╬▒    " ++     "\n" ++                                    
-  "    ╠╠╬╣▒╚░╚╚▒╣Φ╩╚╝╝▀▀╠╪╬╠≥╠╠╣╬╬╬⌐    " ++     "\n" ++                                    
-  "    ╩╠╠╬╬╠╬╬╬╬╬╠▒╦╗╦╬╣╬╬╬╬╬╬╬╬╣╬╬     " ++     "\n" ++ 
-  replicate 110 '-'
- 
