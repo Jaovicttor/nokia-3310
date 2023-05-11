@@ -1,7 +1,12 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE DeriveGeneric  #-}
 module DB.Models.Contact where
 import Database.PostgreSQL.Simple
 import DB.Connection
+import GHC.Generics (Generic)
+
+data Contact = Contact { name :: String } deriving (Generic, Show, FromRow, Read, Eq)
 
 createContacts :: IO()
 createContacts = do
@@ -23,3 +28,12 @@ insertContact name phone birthday speed_dial chip_id = do
  conn <- connectionMyDB
  execute conn q (name, phone, birthday, speed_dial, chip_id)
  return ()
+
+findByPhone::Int -> String -> IO (Maybe String)
+findByPhone chip_id phone = do
+    let q = "select name from contacts where chip_id = ? and phone = ?"
+    conn <- connectionMyDB 
+    result <- query conn q (chip_id, phone)
+    case result of
+        [Contact name] -> return (Just name)
+        _              -> return Nothing

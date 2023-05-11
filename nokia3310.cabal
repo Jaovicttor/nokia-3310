@@ -27,12 +27,16 @@ executable nokia3310
     main-is:         app/Main.hs
 
     -- Modules included in this executable, other than Main.
-    -- other-modules:
-
+    -- other-modules: DB.Connection
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
-    build-depends:    base ^>=4.16.4.0,
+    build-depends:    base ^>=4.18.0.0,
                       postgresql-simple ^>=0.6.4,
-                      bytestring ^>=0.11.4.0
+                      bytestring ^>=0.11.4.0,
+                      time ^>=1.12.2,
+                      random ^>=1.2.1,
+                      async ^>= 2.2.4,
+                      monad-loops ^>= 0.4.2.1,
+                      ansi-terminal ^>= 0.11.5
     hs-source-dirs:   ./
     default-language: Haskell2010
