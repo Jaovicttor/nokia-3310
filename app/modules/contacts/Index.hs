@@ -13,11 +13,12 @@ main = do
 
 menuLoop :: IO ()
 menuLoop = do
-    putStrLn "\n-----Agenda-----\n"
+    printeHeader
     putStrLn "1 - Listar Contatos"
     putStrLn "2 - Adicionar Contato"
     putStrLn "3 - Contatos de Emergência"
     putStrLn "0 - Voltar ao Menu"
+    printeBottom
     choice <- getLine
     case choice of
         "1" -> listContact 
@@ -30,11 +31,12 @@ menuLoop = do
  
 subMenu :: IO()
 subMenu = do
-  putStrLn "-----Opções-----"
+  printeHeader
   putStrLn "1 - Editar Contato"
   putStrLn "2 - Excluir Contato"
   putStrLn "3 - Adicionar Contato"
   putStrLn "0 - Voltar"
+  printeBottom
   choice <- getLine
   case choice of
         "1" -> editContact >> listContact
@@ -179,3 +181,29 @@ editAdd = do
       let nameStr = if null name then phone else name
       Contact.insertContact nameStr phone birthdayStr speedDial 1
       putStrLn "\nContato atualizado com sucesso"
+
+
+
+printeHeader :: IO()
+printeHeader = do
+  putStrLn "\n----------------------------"
+  putStrLn "---------NOKIA-3310---------"
+  putStrLn "----------------------------"
+  putStrLn "-----------agenda-----------"
+  putStrLn "----------------------------"
+  putStrLn "     Selecione uma opção    "
+  putStrLn "----------------------------\n"
+
+printeBottom :: IO()
+printeBottom = do
+  putStrLn "\n----------------------------\n"
+  putStrLn  "    .---.  .---.  .---."
+  putStrLn  "    / 1 /  / 2 /  / 3 /"
+  putStrLn  "    `---'  `---'  `---'"
+  putStrLn  "    .---.  .---.  .---."
+  putStrLn  "    / 4 /  / 5 /  / 6 /"
+  putStrLn  "    `---'  `---'  `---'"
+  putStrLn  "    .---.  .---.  .---."
+  putStrLn  "    / 7 /  / 8 /  / 9 /"
+  putStrLn  "    `---'  `---'  `---'"
+  putStrLn "----------------------------\n"
