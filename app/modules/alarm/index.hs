@@ -18,14 +18,14 @@ mainAlarm = do
     choice <- getLine
     case choice of
         "0" -> return ()
-        "1" -> addAlarm
-        "2" -> listAlarms
-        "3" -> deleteAlarm
+        "1" -> addAlarm >>mainAlarm
+        "2" -> listAlarms >>mainAlarm
+        "3" -> deleteAlarm >>mainAlarm
         "-"-> return ()
         _ -> do
             putStrLn "Opção inválida!"
-        
-    mainAlarm
+            mainAlarm        
+    
 
 addAlarm :: IO ()
 addAlarm = do

@@ -32,6 +32,8 @@ createCalls = do
                     \answered boolean NOT NULL,\
                     \sented_by int,\
                     \received_by int,\
+                    \has_sender_deleted boolean,\
+                    \has_receiber_deleted boolean,\
                     \FOREIGN KEY(sented_by) REFERENCES chips(id),\
                     \FOREIGN KEY(received_by) REFERENCES chips(id));"
     return ()

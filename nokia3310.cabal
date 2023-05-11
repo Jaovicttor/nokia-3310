@@ -31,7 +31,7 @@ executable nokia3310
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
 
-    build-depends:  base ^>=4.18.0.0,
+    build-depends:  base,
                     postgresql-simple ^>=0.6.4,
                     bytestring ^>=0.11.4.0,
                     time ^>=1.12.2,
@@ -43,3 +43,23 @@ executable nokia3310
 
     hs-source-dirs:   ./
     default-language: Haskell2010
+    other-modules:
+        App.Modules.Alarm.Index,
+        App.Modules.Alarm.MainAlarm,
+        App.Modules.Calendar.Index,
+        App.Modules.Call.DeleteCall,
+        App.Modules.Call.ExecuteCall,
+        App.Modules.Call.Index,
+        App.Modules.Call.ListCalls,
+        App.Modules.Contacts.Index,
+        App.Modules.Message.Index,
+        App.Shared.Main.Helper.Display,
+        App.Shared.Main.Helper.Timer,
+        DB.Connection,
+        DB.Init,
+        DB.Models.Alarm,
+        DB.Models.Call,
+        DB.Models.Chip,
+        DB.Models.Contact, 
+        DB.Models.Event, 
+        DB.Models.Message

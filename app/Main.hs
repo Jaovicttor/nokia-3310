@@ -6,12 +6,15 @@ import qualified App.Modules.Calendar.Index as Calendar
 import qualified App.Modules.Contacts.Index as Contacts
 import qualified App.Modules.Message.Index as Message
 import qualified App.Modules.Call.Index as Call
-import Control.Concurrent 
+import qualified DB.Init as Init
 import qualified App.Shared.Main.Helper.Display as Display
 import Control.Concurrent   
+
  
 main :: IO ()
-main = do 
+main = do   
+    
+    Init.init
     _ <- forkIO Cron.alarm  
     Display.printeHeader "--------"
     putStrLn "1 - Contatos"   
