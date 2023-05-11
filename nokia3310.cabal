@@ -35,7 +35,8 @@ executable nokia3310
                       postgresql-simple ^>=0.6.4,
                       bytestring ^>=0.11.4.0,
                       time ^>= 1.12.2,
+                      split ^>= 0.2.3.4,
+                      ansi-terminal ^>= 0.11
                       split ^>= 0.2.3.4
-
     hs-source-dirs:   ./
     default-language: Haskell2010
