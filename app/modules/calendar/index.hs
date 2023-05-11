@@ -90,11 +90,17 @@ editEvent = do
     putStrLn padrao
     putStrLn "Informe o nº do evento:"
     event_number <- getLine
+    validIndex event_number
     validBack event_number
     putStrLn padrao
     addEvento 1
     deleteEvent 1 (read event_number)
     putStrLn $ padrao ++ "\n" ++ "Editou com sucesso"
+
+validIndex :: String -> IO()
+validIndex [] = do
+  putStrLn $ "Nº inválido"
+  editEvent
 
 formDeleteEvent :: IO()
 formDeleteEvent = do 
