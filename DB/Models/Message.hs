@@ -5,6 +5,7 @@ module DB.Models.Message where
 import Database.PostgreSQL.Simple
 import DB.Connection
 import DB.Models.Chip
+import Data.Time.Clock
 import GHC.Generics (Generic)
 
 data Message = Message {
@@ -32,11 +33,12 @@ createMessages = do
                     \FOREIGN KEY(received_by) REFERENCES chips(id));"
     return ()
 
-insertMessage :: String -> String -> Int -> IO ()
-insertMessage message message_date received_by = do
+insertMessage :: String -> Int -> IO ()
+insertMessage message received_by = do
  let q = "insert into messages (message, message_date, sented_by, received_by ) values (?,?,?,?)"
  conn <- connectionMyDB
- execute  conn q (message, message_date, (idChip myChip), received_by)
+ currentTime <- getCurrentTime
+ execute  conn q (message, currentTime, (idChip myChip), received_by)
  return ()
 
 getConversations:: IO [Conversation]
