@@ -1,5 +1,4 @@
 module App.Modules.Call.Index where
-
 import Data.List (elemIndex)
 import Data.Time (UTCTime, getCurrentTime, addUTCTime)
 import Text.Printf (printf)

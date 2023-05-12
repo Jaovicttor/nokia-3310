@@ -1,5 +1,4 @@
 module App.Modules.Call.ListCalls where
-
 import DB.Models.Call
 import DB.Models.Chip
 import DB.Models.Contact

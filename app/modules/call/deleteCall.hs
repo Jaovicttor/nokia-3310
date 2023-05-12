@@ -1,5 +1,4 @@
 module App.Modules.Call.DeleteCall where
-
 import DB.Models.Call
 import DB.Models.Chip
 

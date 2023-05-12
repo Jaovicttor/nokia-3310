@@ -42,7 +42,7 @@ subMenu = do
         "1" -> editContact
         "2" -> formDeleteContact
         "3" -> addContact
-        "0" -> main
+        "0" -> putStrLn "saindo"
         
         _   -> do
             putStrLn "Opção inválida! Tente novamente."
