@@ -14,7 +14,7 @@ data Chip = Chip {
 } deriving (Generic, FromRow,Show, Read, Eq)
 
 myChip :: Chip
-myChip = Chip{idChip = 1, owner = "Meu chipe", number = "12345678910", isOn = True }
+myChip = Chip{idChip = 1, owner = "Leticia Farias", number = "12345678910", isOn = True }
 
 createChips :: IO()
 createChips = do

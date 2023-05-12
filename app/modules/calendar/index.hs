@@ -42,7 +42,7 @@ addEvento 1 = do
   validBack comentario
   if (validData dataInput) && (validTitle titleInput)
     then do
-        insertEvent titleInput dataInput comentario
+        insertEvent titleInput (swapData(dataInput)) comentario
     else do
         putStrLn $ "O nome não deve ser vazio (DD-MM-AAAA):" ++ "\n" ++
           "a data deve ser no formato" ++ "\n" ++
@@ -101,6 +101,7 @@ validIndex :: String -> IO()
 validIndex [] = do
   putStrLn $ "Nº inválido"
   editEvent
+validIndex x = putStrLn ""
 
 formDeleteEvent :: IO()
 formDeleteEvent = do 
