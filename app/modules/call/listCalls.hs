@@ -19,6 +19,7 @@ formatCallPrint index chip_id call_data = do
             Nothing -> pure (show index ++ " - " ++ maybe "" id (receiver_number call_data))
 
 printCalls:: [Call] -> IO()
+printCalls [] = putStrLn "[+] Sem chamadas no histórico"
 printCalls (x:xs) = do
     let indexed = zip [0..] (x:xs)
     let chip = myChip

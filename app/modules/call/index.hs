@@ -49,7 +49,7 @@ proxyOptions 1 = do
     doCall number
     menu
 proxyOptions 2 = do
-    putStrLn "-> Seu Histórico"
+    putStrLn "-> Seu Historico"
     calls <- listCalls
     printCalls calls
     putStrLn "[x] - apagar chamada"
@@ -66,8 +66,8 @@ proxyOptions _ = print "[!] Operacao Invalida"
 menu::IO()
 menu = do
     printeHeader
-    putStrLn "[1] - Fazer Ligação"
-    putStrLn "[2] - Listar Histórico"
+    putStrLn "[1] - Fazer Ligacao"
+    putStrLn "[2] - Listar Historico"
     putStrLn "[0] - Sair"
     printeBottom
     option <- readLn::IO Int
